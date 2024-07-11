@@ -2,6 +2,14 @@
 
 Welcome to the Flight Manager Application! This application allows you to manage customers, airplanes, flights, and reservations for an airline company. Below is an overview of the features and functionalities provided by the application.
 
+
+## Technologies Used
+
+- Flutter
+- Dart
+- SQLite (via `floor` package for database management)
+- EncryptedSharedPreferences for securely storing temporary data
+
 ## Features
 
 ### Customer List Page 👨‍👩‍👧‍👦
@@ -39,13 +47,6 @@ This page simulates booking a customer on a flight. You can add new reservations
 - **Add Reservation**: A button to add a new reservation. When pressed, it navigates to a page where you can select an existing customer for an existing flight on a certain day. Each flight happens once per day and repeats every day.
 - **View Reservation**: A list of all reservations made with the company. Selecting a reservation displays its details, including customer name, departure and destination cities, and departure and arrival times.
 
-
-## Technologies Used
-
-- Flutter
-- Dart
-- SQLite (via `floor` package for database management)
-- EncryptedSharedPreferences for securely storing temporary data
 
 ## Contributors
 
