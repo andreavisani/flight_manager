@@ -1,10 +1,10 @@
-# Flight Manager Application
+# Flight Manager Application ✈️
 
 Welcome to the Flight Manager Application! This application allows you to manage customers, airplanes, flights, and reservations for an airline company. Below is an overview of the features and functionalities provided by the application.
 
 ## Features
 
-### Customer List Page
+### Customer List Page 👨‍👩‍👧‍👦
 
 This page allows you to manage a database of customers. You can add new customers, view existing customers, update customer details, and delete customers.
 
@@ -14,7 +14,7 @@ This page allows you to manage a database of customers. You can add new customer
 - **Delete Customer**: An option to remove a customer from the list and the database.
 - **Copy Previous Customer Data**: When adding a new customer, you can choose to copy the fields from the previously created customer or start with a blank page. Uses EncryptedSharedPreferences to save the data from the previously created customer.
 
-### Airplane List Page
+### Airplane List Page ✈️
 
 This page simulates an airline's list of airplanes. You can add new airplanes, view existing airplanes, and delete airplanes that are no longer in service.
 
@@ -23,7 +23,7 @@ This page simulates an airline's list of airplanes. You can add new airplanes, v
 - **Update Airplane**: An option to update the details of an existing airplane.
 - **Delete Airplane**: An option to remove an airplane from the list and the database.
 
-### Flights List Page
+### Flights List Page 🛫
 
 This page simulates an airline's list of flights between two cities. You can add new flights, view existing flights, and delete flights that are no longer offered.
 
@@ -32,7 +32,7 @@ This page simulates an airline's list of flights between two cities. You can add
 - **Update Flight**: An option to update the details of an existing flight.
 - **Delete Flight**: An option to remove a flight from the list and the database.
 
-### Reservation Page
+### Reservation Page 📅
 
 This page simulates booking a customer on a flight. You can add new reservations for customers on given flights.
 
