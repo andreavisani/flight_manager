@@ -1,3 +1,4 @@
+import 'package:flight_manager/AddFlight.dart';
 import 'package:flutter/material.dart';
 import 'FlightsPage.dart';
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
         '/flights': (context) => FlightsPage(),
+        '/addFlight': (context) => AddFlight(),
 
       },
       title: 'Flutter Demo',
