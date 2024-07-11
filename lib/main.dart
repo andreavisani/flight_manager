@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'FlightsPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,6 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //LIST OF ALL PAGES
+      routes: {
+        '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
+        '/flights': (context) => FlightsPage(),
+
+      },
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -55,18 +62,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,21 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            ElevatedButton(onPressed: () { Navigator.pushNamed(context, '/flights');} , child: Text("Flights"),),
+            ElevatedButton(onPressed: () {} , child: Text("Customers")),
+            ElevatedButton(onPressed: () {} , child: Text("Airplanes")),
+            ElevatedButton(onPressed: () {} , child: Text("Reservations")),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
