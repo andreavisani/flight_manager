@@ -67,14 +67,10 @@ This page simulates booking a customer on a flight. You can add new reservations
 ## Contributors
 
 This project was created by:
-[http](https://github.com/andreavisani)
-https://github.com/AnnLoYiAn
-https://github.com/DikchhaR
-https://github.com/himanishrishi7
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- [Andrea Visani](https://github.com/andreavisani)
+- [Dikchha Rijal](https://github.com/DikchhaR)
+- [Yian Lo](https://github.com/AnnLoYiAn)
+- [Himanish Rishi](https://github.com/himanishrishi7)
 
 
 Enjoy using the Flight Manager Application!
