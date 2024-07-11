@@ -39,23 +39,6 @@ This page simulates booking a customer on a flight. You can add new reservations
 - **Add Reservation**: A button to add a new reservation. When pressed, it navigates to a page where you can select an existing customer for an existing flight on a certain day. Each flight happens once per day and repeats every day.
 - **View Reservation**: A list of all reservations made with the company. Selecting a reservation displays its details, including customer name, departure and destination cities, and departure and arrival times.
 
-## How to Run
-
-1. **Clone the Repository**:
-   ```sh
-   git clone https://github.com/your-username/flight_manager.git
-   cd flight_manager
-   ```
-
-2. **Install Dependencies**:
-   ```sh
-   flutter pub get
-   ```
-
-3. **Run the Application**:
-   ```sh
-   flutter run
-   ```
 
 ## Technologies Used
 
