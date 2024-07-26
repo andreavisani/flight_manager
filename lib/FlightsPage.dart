@@ -72,7 +72,7 @@ class PersonalInfoState extends State<FlightsPage> {
                           TextButton(
                             onPressed: () {
                               removeFlight(rowNum);
-                              Navigator.pop(context, 'Yes');
+                              //Navigator.pop(context, 'Yes');
                             },
                             child: Text("Yes", style: TextStyle(color: Colors.red)),
                           ),
@@ -225,8 +225,9 @@ class PersonalInfoState extends State<FlightsPage> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     textStyle: TextStyle(fontSize: 18),
                   ),
-                  child: Text("Go Back", style: TextStyle(color: Colors.white),),
+                  child: Text("Close", style: TextStyle(color: Colors.white),),
                 ),
+
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,

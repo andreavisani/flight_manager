@@ -1,0 +1,4 @@
+{
+  "string"                    : "Impressionante!",
+  "string_with_interpolation" : "Hey $name come stai?"
+}
