@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 
 import 'Database.dart';
 
-
 class FlightsPage extends StatefulWidget {
   @override
   State<FlightsPage> createState() {
@@ -16,11 +15,11 @@ class FlightsPage extends StatefulWidget {
 }
 
 class PersonalInfoState extends State<FlightsPage> {
-
+  ///a list of existing flights
   var flights = <Flight>[];
-
+  /// Object for database interactions
   late FlightDAO flightDAO;
-
+  ///The currently selected flight
   Flight? selectedItem = null;
 
   @override
@@ -30,14 +29,12 @@ class PersonalInfoState extends State<FlightsPage> {
     $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
       flightDAO = database.GetDao;
       //now you can query
-      flightDAO.selectEverything().then(  (listOfItems){
+      flightDAO.selectEverything().then((listOfItems) {
         setState(() {
           flights.addAll(listOfItems);
         });
-
       });
     });
-
   }
 
   @override
@@ -45,7 +42,10 @@ class PersonalInfoState extends State<FlightsPage> {
     super.dispose();
   }
 
-
+  /**
+   * Creates a widget witg the flight list.
+   * @return the flight list page
+   */
   Widget FlightList() {
     return Center(
       child: Column(
@@ -120,24 +120,44 @@ class PersonalInfoState extends State<FlightsPage> {
             ),
           ),
           SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/addFlight');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent, // background color
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              textStyle: TextStyle(fontSize: 18),
-            ),
-            child: Text("Add Flight", style: TextStyle(color: Colors.white),),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/homePage');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent, // background color
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  textStyle: TextStyle(fontSize: 18),
+                ),
+                child: Text("Go Back", style: TextStyle(color: Colors.white),),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/addFlight');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent, // background color
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  textStyle: TextStyle(fontSize: 18),
+                ),
+                child: Text("Add Flight", style: TextStyle(color: Colors.white),),
+              ),
+            ],
           ),
+
           SizedBox(height: 16),
         ],
       ),
     );
   }
 
-
+  /**
+   * Creates a widget with the details of a flight
+   * @return the details page
+   */
   Widget DetailsPage() {
     if (selectedItem == null) {
       return Center(
@@ -214,11 +234,7 @@ class PersonalInfoState extends State<FlightsPage> {
                     textStyle: TextStyle(fontSize: 18),
                   ),
                   onPressed: () {
-                    setState(() {
-                      flightDAO.deleteFlight(selectedItem!);
-                      flights.remove(selectedItem!);
-                      selectedItem = null;
-                    });
+                    showDeleteConfirmationDialog(context);
                   },
                   child: Text("DELETE", style: TextStyle(color: Colors.white)),
                 ),
@@ -230,20 +246,95 @@ class PersonalInfoState extends State<FlightsPage> {
     }
   }
 
-  Widget responsiveLayout(){
+  /**
+   * Displays an alertDialog asking for confirmation
+   * @param context the context
+   */
+  void showDeleteConfirmationDialog(BuildContext context) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Delete Flight'),
+        content: const Text('Are you sure you want to delete this flight?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              deleteSelectedItem();
+              Navigator.pop(context, 'Yes');
+            },
+            child: Text("Yes", style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'No'),
+            child: const Text('No'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /**
+   * Displays usage info as alertDialog
+   * @param context the context
+   */
+  void showUsageInfo(BuildContext contex){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Instructions'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('1. Click a flight to display details.'),
+                Text('2. Click a flight for 2 seconds to remove it.'),
+                Text('3. Use \'BACK\' button to return to the main page.'),
+                Text('4. Use \'ADD FLIGHT\' button to add a new flight.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /**
+   * Deletes an item from DB and list
+   */
+  void deleteSelectedItem() {
+    if (selectedItem != null) {
+      setState(() {
+        flightDAO.deleteFlight(selectedItem!);
+        flights.remove(selectedItem);
+        selectedItem = null;
+      });
+    }
+  }
+
+  /**
+   * Creates a responsive layout when in landscape mode and screen size > 720
+   * @return the layout to display
+   */
+  Widget responsiveLayout() {
     var size = MediaQuery.of(context).size;
     var height = size.height;
     var width = size.width;
 
-    if( (width>height) && (width > 720)) { // if in Landscape mode
-      return Row( children:[
-        Expanded( flex: 2, child: FlightList()),
-        Expanded( flex: 3, child: DetailsPage())] //Right side
-
-
-      );
-    } else {// if Portrait mode
-      if (selectedItem == null){
+    if ((width > height) && (width > 720)) { // if in Landscape mode
+      return Row(children: [
+        Expanded(flex: 2, child: FlightList()),
+        Expanded(flex: 3, child: DetailsPage())
+      ]);
+    } else { // if Portrait mode
+      if (selectedItem == null) {
         return FlightList();
       } else {
         return DetailsPage();
@@ -251,30 +342,28 @@ class PersonalInfoState extends State<FlightsPage> {
     }
   }
 
-
-
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info))
+        ],
         title: Text("Flights"),
       ),
-      body: responsiveLayout()
+      body: responsiveLayout(),
     );
   }
 
-  void removeFlight(var rowNum){
+  /**
+   * removes a flight from db and flight list.
+   * @param rowNum the row number used for removing the item from the list.
+   */
+  void removeFlight(var rowNum) {
     setState(() {
-
       flightDAO.deleteFlight(flights.elementAt(rowNum));
-
       flights.removeAt(rowNum);
     });
 
