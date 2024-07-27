@@ -1,7 +1,7 @@
 {
-  "add_flight": "ADD FLIGHT",
-  "back": "GO BACK",
-  "delete_flight": "DELETE FLIGHT",
+  "add_flight": "Add Flight",
+  "back": "Back",
+  "delete_flight": "Delete Flight",
   "flights": "Flights",
   "flights_details": "Flight Details",
   "flights_list": "Flight List",
@@ -24,9 +24,12 @@
   "add_flight_instruction4": "Use 'ADD FLIGHT' button to add a new flight and return to the previous page.",
   "yes": "Yes",
   "delete_flight_conf": "Are you sure you want to delete this fligth?",
-  "delete": "DELETE",
+  "delete": "Delete",
   "select_details": "Select a flight to see details",
   "remove_flight": "Remove flight",
   "remove_flight_conf": "Are you sure you want to remove this flight?",
-  "edit": "Edit"
+  "edit": "Edit",
+  "edit_flight": "Edit flight",
+  "save": "Save",
+  "cancel": "Cancel"
 }
