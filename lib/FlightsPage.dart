@@ -24,7 +24,7 @@ class PersonalInfoState extends State<FlightsPage> {
     super.initState();
 
     $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
-      flightDAO = database.GetDao;
+      flightDAO = database.flightDAO;
       //now you can query
       flightDAO.selectEverything().then(  (listOfItems){
         setState(() {

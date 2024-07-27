@@ -76,6 +76,7 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
   }
 
   FlightDAO? _GetDaoInstance;
+  AirplaneDAO? _AirplaneDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -100,7 +101,8 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Flight` (`id` INTEGER NOT NULL, `departureTime` INTEGER NOT NULL, `arrivalTime` INTEGER NOT NULL, `departureCity` TEXT NOT NULL, `destinationCity` TEXT NOT NULL, PRIMARY KEY (`id`))');
-
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Airplane` (`id` INTEGER NOT NULL, `type` TEXT NOT NULL, `passengers` INTEGER NOT NULL, `maxSpeed` REAL NOT NULL, `range` REAL NOT NULL, PRIMARY KEY (`id`))');
         await callback?.onCreate?.call(database, version);
       },
     );
@@ -108,8 +110,13 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
   }
 
   @override
-  FlightDAO get GetDao {
+  FlightDAO get flightDAO {
     return _GetDaoInstance ??= _$FlightDAO(database, changeListener);
+  }
+
+  @override
+  AirplaneDAO get airplaneDAO {
+    return _AirplaneDaoInstance ??= _$AirplaneDAO(database, changeListener);
   }
 }
 
@@ -172,7 +179,89 @@ class _$FlightDAO extends FlightDAO {
   Future<int> deleteFlight(Flight flight) {
     return _flightDeletionAdapter.deleteAndReturnChangedRows(flight);
   }
+
+
+}
+class _$AirplaneDAO extends AirplaneDAO {
+  _$AirplaneDAO(
+      this.database,
+      this.changeListener,
+      )   : _queryAdapter = QueryAdapter(database),
+        _airplaneInsertionAdapter = InsertionAdapter(
+            database,
+            'Airplane',
+                (Airplane item) => <String, Object?>{
+              'id': item.id,
+              'type': item.type,
+              'passengers': item.passengers,
+              'maxSpeed': item.maxSpeed,
+              'range': item.range
+            }),
+        _airplaneUpdateAdapter = UpdateAdapter(
+            database,
+            'Airplane',
+            ['id'],
+                (Airplane item) => <String, Object?>{
+              'id': item.id,
+              'type': item.type,
+              'passengers': item.passengers,
+              'maxSpeed': item.maxSpeed,
+              'range': item.range
+            }),
+        _airplaneDeletionAdapter = DeletionAdapter(
+            database,
+            'Airplane',
+            ['id'],
+                (Airplane item) => <String, Object?>{
+              'id': item.id,
+              'type': item.type,
+              'passengers': item.passengers,
+              'maxSpeed': item.maxSpeed,
+              'range': item.range
+            });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Airplane> _airplaneInsertionAdapter;
+
+  final UpdateAdapter<Airplane> _airplaneUpdateAdapter;
+
+  final DeletionAdapter<Airplane> _airplaneDeletionAdapter;
+
+  @override
+  Future<List<Airplane>> findAllAirplanes() async {
+    return _queryAdapter.queryList('SELECT * FROM Airplane',
+        mapper: (Map<String, Object?> row) =>
+            Airplane(
+                id: row['id'] as int,
+                type: row['type'] as String,
+                passengers: row['passengers'] as int,
+                maxSpeed: row['maxSpeed'] as double,
+                range: row['range'] as double));
+  }
+
+  @override
+  Future<void> insertAirplane(Airplane airplane) async {
+    await _airplaneInsertionAdapter.insert(airplane, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<int> deleteAirplane(Airplane airplane) {
+    return _airplaneDeletionAdapter.deleteAndReturnChangedRows(airplane);
+  }
+
+  @override
+  Future<void> updateAirplane(Airplane airplane) async {
+    await _airplaneUpdateAdapter.update(
+      airplane,
+      OnConflictStrategy.abort, // Specify the conflict strategy if needed
+    );
+  }
 }
 
 // ignore_for_file: unused_element
-final _dateTimeConverter = DateTimeConverter();
+  final _dateTimeConverter = DateTimeConverter();

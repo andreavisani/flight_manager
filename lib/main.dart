@@ -1,5 +1,6 @@
 import 'package:flight_manager/AddFlight.dart';
 import 'package:flutter/material.dart';
+import 'AirplaneList.dart';
 import 'FlightsPage.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
         '/flights': (context) => FlightsPage(),
         '/addFlight': (context) => AddFlight(),
+        '/airplane': (context) => AirplanesList(),
 
       },
       title: 'Flutter Demo',
@@ -104,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ElevatedButton(onPressed: () { Navigator.pushNamed(context, '/flights');} , child: Text("Flights"),),
             ElevatedButton(onPressed: () {} , child: Text("Customers")),
-            ElevatedButton(onPressed: () {} , child: Text("Airplanes")),
+            ElevatedButton(onPressed: () {Navigator.pushNamed(context, '/airplane');} , child: Text("Airplane"),),
             ElevatedButton(onPressed: () {} , child: Text("Reservations")),
           ],
         ),

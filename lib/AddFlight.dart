@@ -84,7 +84,7 @@ class AddFlightState extends State<AddFlight> {
     _dateTimeControllerArrival = TextEditingController();
 
     $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
-      flightDAO = database.GetDao;
+      flightDAO = database.flightDAO;
 
     });
 
