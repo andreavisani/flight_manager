@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'AppLocalizations.dart';
+import 'AppLocalizations.dart';
 import 'Database.dart';
 
 class FlightsPage extends StatefulWidget {
@@ -53,7 +55,7 @@ class PersonalInfoState extends State<FlightsPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Flight List',
+            AppLocalizations.of(context)!.translate('flights_list')!,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
           ),
           SizedBox(height: 16),
@@ -66,15 +68,15 @@ class PersonalInfoState extends State<FlightsPage> {
                     showDialog<String>(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Remove Flight'),
-                        content: const Text('Are you sure you want to remove this flight?'),
+                        title: Text(AppLocalizations.of(context)!.translate('remove_flight')!),
+                        content: Text(AppLocalizations.of(context)!.translate('remove_flight_conf')!),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
                               removeFlight(rowNum);
                               //Navigator.pop(context, 'Yes');
                             },
-                            child: Text("Yes", style: TextStyle(color: Colors.red)),
+                            child: Text(AppLocalizations.of(context)!.translate('yes')!, style: TextStyle(color: Colors.red)),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context, 'No'),
@@ -100,12 +102,10 @@ class PersonalInfoState extends State<FlightsPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Departure: ${flights[rowNum].departureCity}",
+                              Text( AppLocalizations.of(context)!.translate('departure')!+ " ${flights[rowNum].departureCity}",
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              Text(
-                                "Destination: ${flights[rowNum].destinationCity}",
+                              Text(AppLocalizations.of(context)!.translate('destination')!+ " ${flights[rowNum].destinationCity}",
                                 style: TextStyle(fontSize: 16),
                               ),
                             ],
@@ -132,8 +132,9 @@ class PersonalInfoState extends State<FlightsPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
-                child: Text("Go Back", style: TextStyle(color: Colors.white),),
+                child: Text(AppLocalizations.of(context)!.translate('back')!, style: TextStyle(color: Colors.white),),
               ),
+              // ADD FLIGHT BUTTON
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/addFlight');
@@ -143,7 +144,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
-                child: Text("Add Flight", style: TextStyle(color: Colors.white),),
+                child: Text(AppLocalizations.of(context)!.translate('add_flight')!, style: TextStyle(color: Colors.white),),
               ),
             ],
           ),
@@ -162,7 +163,7 @@ class PersonalInfoState extends State<FlightsPage> {
     if (selectedItem == null) {
       return Center(
         child: Text(
-          "Select a Flight to see the details",
+          AppLocalizations.of(context)!.translate('select_details')!,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
         ),
       );
@@ -173,7 +174,7 @@ class PersonalInfoState extends State<FlightsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Flight Details",
+            AppLocalizations.of(context)!.translate('flights_details')!,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
             ),
             SizedBox(height: 16),
@@ -190,20 +191,16 @@ class PersonalInfoState extends State<FlightsPage> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
                     SizedBox(height: 8),
-                    Text(
-                      "Departure: ${selectedItem!.departureCity}",
+                    Text(AppLocalizations.of(context)!.translate('departure_city')! + " ${selectedItem!.departureCity}",
                       style: TextStyle(fontSize: 18),
                     ),
-                    Text(
-                      "Destination: ${selectedItem!.destinationCity}",
+                    Text(AppLocalizations.of(context)!.translate('destination_city')! + " ${selectedItem!.destinationCity}",
                       style: TextStyle(fontSize: 18),
                     ),
-                    Text(
-                      "Departure Time: ${selectedItem!.departureTime}",
+                    Text(AppLocalizations.of(context)!.translate('departure_time')! + " ${selectedItem!.departureTime}",
                       style: TextStyle(fontSize: 18),
                     ),
-                    Text(
-                      "Arrival Time: ${selectedItem!.arrivalTime}",
+                    Text(AppLocalizations.of(context)!.translate('arrival_time')! + " ${selectedItem!.arrivalTime}",
                       style: TextStyle(fontSize: 18),
                     ),
                   ],
@@ -214,6 +211,7 @@ class PersonalInfoState extends State<FlightsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                //CLOSE BUTTON
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -225,9 +223,22 @@ class PersonalInfoState extends State<FlightsPage> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     textStyle: TextStyle(fontSize: 18),
                   ),
-                  child: Text("Close", style: TextStyle(color: Colors.white),),
+                  child: Text(AppLocalizations.of(context)!.translate('close')!, style: TextStyle(color: Colors.white),),
+                ),
+                //EDIT BUTTON
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    showEditConfirmationDialog(context, selectedItem!);
+                  },
+                  child: Text(AppLocalizations.of(context)!.translate('edit')!, style: TextStyle(color: Colors.white)),
                 ),
 
+                //DELETE BUTTON
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -237,7 +248,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   onPressed: () {
                     showDeleteConfirmationDialog(context);
                   },
-                  child: Text("DELETE", style: TextStyle(color: Colors.white)),
+                  child: Text(AppLocalizations.of(context)!.translate('delete')!, style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -255,15 +266,15 @@ class PersonalInfoState extends State<FlightsPage> {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Delete Flight'),
-        content: const Text('Are you sure you want to delete this flight?'),
+        title: Text(AppLocalizations.of(context)!.translate('delete_flight')!),
+        content: Text(AppLocalizations.of(context)!.translate('delete_flight_conf')!),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               deleteSelectedItem();
               Navigator.pop(context, 'Yes');
             },
-            child: Text("Yes", style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.translate('yes')!, style: TextStyle(color: Colors.red)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'No'),
@@ -272,6 +283,30 @@ class PersonalInfoState extends State<FlightsPage> {
         ],
       ),
     );
+  }
+
+  void showEditConfirmationDialog(BuildContext context, Flight selectedItem){
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.translate('edit_flight')!),
+        content: Text(AppLocalizations.of(context)!.translate('delete_flight_conf')!),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              deleteSelectedItem();
+              Navigator.pop(context, 'Yes');
+            },
+            child: Text(AppLocalizations.of(context)!.translate('yes')!, style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'No'),
+            child: const Text('No'),
+          ),
+        ],
+      ),
+    );
+
   }
 
   /**
@@ -283,21 +318,55 @@ class PersonalInfoState extends State<FlightsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Instructions'),
+          title: Text(AppLocalizations.of(context)!.translate('instructions')!),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('1. Click a flight to display details.'),
-                Text('2. Click a flight for 2 seconds to remove it.'),
-                Text('3. Use \'BACK\' button to return to the main page.'),
-                Text('4. Use \'ADD FLIGHT\' button to add a new flight.'),
+                Text(AppLocalizations.of(context)!.translate('flights_list_instruction1')!),
+                Text(AppLocalizations.of(context)!.translate('flights_list_instruction2')!),
+                Text(AppLocalizations.of(context)!.translate('flights_list_instruction3')!),
+                Text(AppLocalizations.of(context)!.translate('flights_list_instruction4')!),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Close'),
+              child: Text(AppLocalizations.of(context)!.translate('close')!),
               onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showLanguageInfo(BuildContext contex){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Language'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Choose the language'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Italian'),
+              onPressed: () {
+                MyApp.setLocale(context, new Locale("it", "IT"));
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('English'),
+              onPressed: () {
+                MyApp.setLocale(context, new Locale("en", "CA"));
                 Navigator.of(context).pop();
               },
             ),
@@ -350,9 +419,10 @@ class PersonalInfoState extends State<FlightsPage> {
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
-          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info))
+          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info)),
+          IconButton(onPressed: () {showLanguageInfo(context);}, icon: Icon(Icons.language)),
         ],
-        title: Text("Flights"),
+        title: Text(AppLocalizations.of(context)!.translate('flights')!),
       ),
       body: responsiveLayout(),
     );
