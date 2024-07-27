@@ -15,4 +15,7 @@ abstract class FlightDAO{
   @Query('SELECT * FROM Flight') // ToDoItem is the entity objejct
   Future<List<Flight>> selectEverything(); // returns an arrayList of ToDoItems
 
+  @update
+  Future<void> updateFlight(Flight flight);
+
 }

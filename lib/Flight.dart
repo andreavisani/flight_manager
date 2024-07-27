@@ -9,11 +9,11 @@ class Flight {
   @primaryKey
   final int id;
 
-  final DateTime departureTime;
-  final DateTime arrivalTime;
+  DateTime departureTime;
+  DateTime arrivalTime;
 
-  final String departureCity;
-  final String destinationCity;
+  String departureCity;
+  String destinationCity;
 
   Flight(this.id, this.departureCity, this.destinationCity, this.departureTime, this.arrivalTime) {
     if (id >= ID) {
