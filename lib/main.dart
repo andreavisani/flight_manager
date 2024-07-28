@@ -1,7 +1,9 @@
 
 import 'package:flight_manager/AddFlight.dart';
 import 'package:flutter/material.dart';
+import 'AddCustomer.dart';
 import 'FlightsPage.dart';
+import 'customerlist.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,12 +16,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
       //LIST OF ALL PAGES
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
         '/flights': (context) => FlightsPage(),
         '/addFlight': (context) => AddFlight(),
-        // '/customerlist': (context) =>Customer()
+
+        '/customer': (context) =>CustomersPage(),
+        '/addCustomer': (context) =>AddCustomer()
 
       },
       title: 'Flutter Demo',
@@ -105,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(onPressed: () { Navigator.pushNamed(context, '/flights');} , child: Text("Flights"),),
-            ElevatedButton(onPressed: () {} , child: Text("Customers")),
             ElevatedButton(onPressed: () { Navigator.pushNamed(context, '/customer');} , child: Text("Customers"),),
             ElevatedButton(onPressed: () {} , child: Text("Airplanes")),
             ElevatedButton(onPressed: () {} , child: Text("Reservations")),
