@@ -75,6 +75,8 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
+  CustomerDAO? _customerDAOInstance;
+
   FlightDAO? _GetDaoInstance;
 
   Future<sqflite.Database> open(
@@ -100,6 +102,8 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Flight` (`id` INTEGER NOT NULL, `departureTime` INTEGER NOT NULL, `arrivalTime` INTEGER NOT NULL, `departureCity` TEXT NOT NULL, `destinationCity` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Customer` (`id` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `address` TEXT NOT NULL, `birthday` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -108,8 +112,91 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
   }
 
   @override
+  CustomerDAO get customerDAO {
+    return _customerDAOInstance ??= _$CustomerDAO(database, changeListener);
+  }
+
+  @override
   FlightDAO get GetDao {
     return _GetDaoInstance ??= _$FlightDAO(database, changeListener);
+  }
+}
+
+class _$CustomerDAO extends CustomerDAO {
+  _$CustomerDAO(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _customerInsertionAdapter = InsertionAdapter(
+            database,
+            'Customer',
+            (Customer item) => <String, Object?>{
+                  'id': item.id,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': _dateTimeConverter.encode(item.birthday)
+                }),
+        _customerUpdateAdapter = UpdateAdapter(
+            database,
+            'Customer',
+            ['id'],
+            (Customer item) => <String, Object?>{
+                  'id': item.id,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': _dateTimeConverter.encode(item.birthday)
+                }),
+        _customerDeletionAdapter = DeletionAdapter(
+            database,
+            'Customer',
+            ['id'],
+            (Customer item) => <String, Object?>{
+                  'id': item.id,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': _dateTimeConverter.encode(item.birthday)
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Customer> _customerInsertionAdapter;
+
+  final UpdateAdapter<Customer> _customerUpdateAdapter;
+
+  final DeletionAdapter<Customer> _customerDeletionAdapter;
+
+  @override
+  Future<List<Customer>> selectEverything() async {
+    return _queryAdapter.queryList('SELECT * FROM Customer',
+        mapper: (Map<String, Object?> row) => Customer(
+            row['id'] as int,
+            row['firstName'] as String,
+            row['lastName'] as String,
+            row['address'] as String,
+            _dateTimeConverter.decode(row['birthday'] as int)));
+  }
+
+  @override
+  Future<int> insertCustomer(Customer customer) {
+    return _customerInsertionAdapter.insertAndReturnId(
+        customer, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCustomer(Customer customer) async {
+    await _customerUpdateAdapter.update(customer, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteCustomer(Customer customer) async {
+    await _customerDeletionAdapter.delete(customer);
   }
 }
 
