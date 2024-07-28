@@ -2,6 +2,12 @@
 
 import 'package:flutter/cupertino.dart';
 
+import 'main.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
 class CustomerList extends StatelessWidget {
   const CustomerList({super.key});
 
