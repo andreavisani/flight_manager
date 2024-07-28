@@ -12,11 +12,11 @@ import 'Database.dart';
 class AddFlight extends StatefulWidget {
   @override
   State<AddFlight> createState() {
-    return AddFlightState();
+    return AddCustomerState();
   }
 }
 
-class AddFlightState extends State<AddFlight> {
+class AddCustomerState extends State<AddFlight> {
 
   late TextEditingController _controllerDepartureCity;
   late TextEditingController _controllerDestinationCity;
