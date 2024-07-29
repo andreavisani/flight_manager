@@ -1,0 +1,12 @@
+{
+  "title_customers": "Grahak",
+  "title_add_customer": "Naya Grahak thapnus",
+  "instructions": "Nirdeshan",
+  "first_name": "Naam",
+  "last_name": "Thar",
+  "address": "Thegana",
+  "select_birthday": "Janma miti halnus",
+  "add_customer": "Naya Grahak thapnus",
+  "customer_added_successfully": "Grahak ko safal entry",
+  "error_adding_customer": "Grahak halna Asafal"
+}

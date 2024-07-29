@@ -1,0 +1,12 @@
+{
+  "title_customers": "Customers",
+  "title_add_customer": "Add Customer",
+  "instructions": "Instructions",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "address": "Address",
+  "select_birthday": "Select Birthday",
+  "add_customer": "Add Customer",
+  "customer_added_successfully": "Customer added successfully",
+  "error_adding_customer": "Error adding customer"
+}
