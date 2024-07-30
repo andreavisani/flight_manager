@@ -1,14 +1,9 @@
-
-import 'package:flight_manager/main.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
-
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'Customer.dart';
 import 'CustomerDAO.dart';
 import 'Database.dart';
-
 
 class AddCustomer extends StatefulWidget {
   @override
@@ -18,16 +13,14 @@ class AddCustomer extends StatefulWidget {
 }
 
 class AddCustomerState extends State<AddCustomer> {
-
   late TextEditingController _controllerFirstName;
   late TextEditingController _controllerLastName;
   late TextEditingController _controllerAddress;
   late TextEditingController _dateTimeControllerBirthday;
   late CustomerDAO customerDAO;
+  final EncryptedSharedPreferences encryptedSharedPreferences = EncryptedSharedPreferences();
 
-
-  Future<void> _selectDateTime(BuildContext context,
-      TextEditingController controller) async {
+  Future<void> _selectDateTime(BuildContext context, TextEditingController controller) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -36,26 +29,24 @@ class AddCustomerState extends State<AddCustomer> {
     );
 
     if (pickedDate != null) {
-      final DateTime combinedDateTime = DateTime(
-          pickedDate.year, pickedDate.month, pickedDate.day);
-      String formattedDateTime = DateFormat('yyyy-MM-dd').format(
-          combinedDateTime);
+      final DateTime combinedDateTime = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+      String formattedDateTime = DateFormat('yyyy-MM-dd').format(combinedDateTime);
       controller.text = formattedDateTime;
+      encryptedSharedPreferences.setString('birthday', formattedDateTime);
     }
   }
-
 
   void addCustomer() {
     setState(() {
       try {
-        final DateTime birthday = DateFormat('yyyy-MM-dd').parse(
-            _dateTimeControllerBirthday.text);
-
+        final DateTime birthday = DateFormat('yyyy-MM-dd').parse(_dateTimeControllerBirthday.text);
 
         // putting ID++, make sure the id is increased every time
         var newCustomer = Customer(
-            Customer.ID++, _controllerFirstName.value.text,
-            _controllerLastName.value.text, _controllerAddress.value.text,
+            Customer.ID++,
+            _controllerFirstName.value.text,
+            _controllerLastName.value.text,
+            _controllerAddress.value.text,
             birthday);
 
         customerDAO.insertCustomer(newCustomer);
@@ -76,6 +67,26 @@ class AddCustomerState extends State<AddCustomer> {
     });
   }
 
+  void _showInstructions() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Instructions'),
+          content: Text('To add a customer, fill in the fields and click the "Add Customer" button.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -85,13 +96,35 @@ class AddCustomerState extends State<AddCustomer> {
     _controllerAddress = TextEditingController();
     _dateTimeControllerBirthday = TextEditingController();
 
-    $FloorFlightManagerDatabase.databaseBuilder('app_database.db')
-        .build()
-        .then((database) {
+    // Retrieve saved inputs from EncryptedSharedPreferences
+    encryptedSharedPreferences.getString('first_name').then((value) {
+      if (value != null) {
+        _controllerFirstName.text = value;
+      }
+    });
+
+    encryptedSharedPreferences.getString('last_name').then((value) {
+      if (value != null) {
+        _controllerLastName.text = value;
+      }
+    });
+
+    encryptedSharedPreferences.getString('address').then((value) {
+      if (value != null) {
+        _controllerAddress.text = value;
+      }
+    });
+
+    encryptedSharedPreferences.getString('birthday').then((value) {
+      if (value != null) {
+        _dateTimeControllerBirthday.text = value;
+      }
+    });
+
+    $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
       setState(() {
         customerDAO = database.customerDAO;
-      }
-      );
+      });
     });
   }
 
@@ -104,16 +137,20 @@ class AddCustomerState extends State<AddCustomer> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Add Customer"),
+        actions: [
+          IconButton(
+
+            icon: Icon(Icons.info),
+            onPressed: _showInstructions,
+          ),
+          OutlinedButton(onPressed: () { Navigator.pop(context); }, child: Text("Go Back")),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -126,6 +163,9 @@ class AddCustomerState extends State<AddCustomer> {
                 labelText: "First Name",
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                encryptedSharedPreferences.setString('first_name', value);
+              },
             ),
             SizedBox(height: 10),
             TextField(
@@ -134,6 +174,9 @@ class AddCustomerState extends State<AddCustomer> {
                 labelText: "Last Name",
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                encryptedSharedPreferences.setString('last_name', value);
+              },
             ),
             SizedBox(height: 10),
             TextField(
@@ -142,6 +185,9 @@ class AddCustomerState extends State<AddCustomer> {
                 labelText: "Address",
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                encryptedSharedPreferences.setString('address', value);
+              },
             ),
             SizedBox(height: 10),
             TextField(
@@ -151,8 +197,7 @@ class AddCustomerState extends State<AddCustomer> {
                 labelText: 'Select Birthday',
                 suffixIcon: Icon(Icons.calendar_today),
               ),
-              onTap: () =>
-                  _selectDateTime(context, _dateTimeControllerBirthday),
+              onTap: () => _selectDateTime(context, _dateTimeControllerBirthday),
             ),
             SizedBox(height: 20),
             ElevatedButton(
