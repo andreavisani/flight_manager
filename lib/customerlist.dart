@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'Customer.dart';
 import 'CustomerDAO.dart';
 import 'Database.dart';
+import 'AddCustomer.dart';
 
 class CustomersPage extends StatefulWidget {
   @override
@@ -116,7 +118,7 @@ class CustomersPageState extends State<CustomersPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Instructions'),
-          content: Text('Here are the instructions for using the interface.'),
+          content: Text('Select a customer to view their details.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -130,6 +132,26 @@ class CustomersPageState extends State<CustomersPage> {
     );
   }
 
+  void _refreshCustomerList() {
+    customerDAO.selectEverything().then((listOfItems) {
+      setState(() {
+        customer = listOfItems;
+        selectedCustomer = null; // Deselect customer after refresh
+      });
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error refreshing customer list'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,12 +161,16 @@ class CustomersPageState extends State<CustomersPage> {
         actions: [
           Row(
             children: [
-              Text("Info:"),
+
               IconButton(
                 icon: Icon(Icons.info),
                 onPressed: () {
                   _showInstructionsDialog(context);
                 },
+              ),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: _refreshCustomerList,
               ),
             ],
           ),
@@ -153,11 +179,19 @@ class CustomersPageState extends State<CustomersPage> {
       ),
       body: responsiveLayout(context),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/addCustomer');
+        onPressed: () async {
+          final newCustomer = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddCustomer()),
+          );
+          if (newCustomer != null && newCustomer is Customer) {
+            setState(() {
+              customer.add(newCustomer);
+            });
+          }
         },
         icon: Icon(Icons.add),
-        label: Text('Add a new Customer'),
+        label: Text('Add'),
         backgroundColor: Colors.blue,
       ),
     );
@@ -250,18 +284,55 @@ class CustomersPageState extends State<CustomersPage> {
                         SizedBox(height: 4),
                         Text("Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            _showDeleteDialog(context, selectedCustomer!);
-                          },
-                          icon: Icon(Icons.delete),
-                          label: Text("Delete"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                        Row(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                if (selectedCustomer != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddCustomer(customer: selectedCustomer),
+                                    ),
+                                  ).then((updatedCustomer) {
+                                    if (updatedCustomer != null && updatedCustomer is Customer) {
+                                      setState(() {
+                                        final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
+                                        if (index != -1) {
+                                          customer[index] = updatedCustomer;
+                                        }
+                                        selectedCustomer = updatedCustomer;
+                                      });
+                                    }
+                                  });
+                                }
+                              },
+                              icon: Icon(Icons.update),
+                              label: Text("Update"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
                             ),
-                          ),
+                            SizedBox(width: 10),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                if (selectedCustomer != null) {
+                                  _showDeleteDialog(context, selectedCustomer!);
+                                }
+                              },
+                              icon: Icon(Icons.delete),
+                              label: Text("Delete"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -344,18 +415,55 @@ class CustomersPageState extends State<CustomersPage> {
                       SizedBox(height: 10),
                       Text("Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
                       SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _showDeleteDialog(context, selectedCustomer!);
-                        },
-                        icon: Icon(Icons.delete),
-                        label: Text("Delete"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              if (selectedCustomer != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddCustomer(customer: selectedCustomer),
+                                  ),
+                                ).then((updatedCustomer) {
+                                  if (updatedCustomer != null && updatedCustomer is Customer) {
+                                    setState(() {
+                                      final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
+                                      if (index != -1) {
+                                        customer[index] = updatedCustomer;
+                                      }
+                                      selectedCustomer = updatedCustomer;
+                                    });
+                                  }
+                                });
+                              }
+                            },
+                            icon: Icon(Icons.update),
+                            label: Text("Update"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              if (selectedCustomer != null) {
+                                _showDeleteDialog(context, selectedCustomer!);
+                              }
+                            },
+                            icon: Icon(Icons.delete),
+                            label: Text("Delete"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

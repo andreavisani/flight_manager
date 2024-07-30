@@ -6,6 +6,10 @@ import 'CustomerDAO.dart';
 import 'Database.dart';
 
 class AddCustomer extends StatefulWidget {
+  final Customer? customer;
+
+  AddCustomer({this.customer});
+
   @override
   State<AddCustomer> createState() {
     return AddCustomerState();
@@ -38,18 +42,42 @@ class AddCustomerState extends State<AddCustomer> {
 
   void addCustomer() {
     setState(() {
+      // Check if all fields have a value
+      if (_controllerFirstName.text.isEmpty ||
+          _controllerLastName.text.isEmpty ||
+          _controllerAddress.text.isEmpty ||
+          _dateTimeControllerBirthday.text.isEmpty) {
+
+        // Show a Snackbar if any field is empty
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please fill in all fields'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        );
+        return;
+      }
+
       try {
         final DateTime birthday = DateFormat('yyyy-MM-dd').parse(_dateTimeControllerBirthday.text);
 
-        // putting ID++, make sure the id is increased every time
+        // Increment the ID and create a new Customer
         var newCustomer = Customer(
-            Customer.ID++,
-            _controllerFirstName.value.text,
-            _controllerLastName.value.text,
-            _controllerAddress.value.text,
-            birthday);
+          Customer.ID++,
+          _controllerFirstName.text,
+          _controllerLastName.text,
+          _controllerAddress.text,
+          birthday,
+        );
 
+        // Insert the new customer into the database
         customerDAO.insertCustomer(newCustomer);
+
+        // Show a success Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Customer added successfully'),
@@ -60,9 +88,68 @@ class AddCustomerState extends State<AddCustomer> {
             ),
           ),
         );
-        Navigator.pop(context);
+
+        // Pass the new customer back to the previous screen
+        Navigator.pop(context, newCustomer);
       } catch (e) {
         print("Error adding customer: $e");
+      }
+    });
+  }
+
+  void updateCustomer() {
+    setState(() {
+      // Check if all fields have a value
+      if (_controllerFirstName.text.isEmpty ||
+          _controllerLastName.text.isEmpty ||
+          _controllerAddress.text.isEmpty ||
+          _dateTimeControllerBirthday.text.isEmpty) {
+
+        // Show a Snackbar if any field is empty
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please fill in all fields'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        );
+        return;
+      }
+
+      try {
+        final DateTime birthday = DateFormat('yyyy-MM-dd').parse(_dateTimeControllerBirthday.text);
+
+        // Update the existing Customer
+        var updatedCustomer = Customer(
+          widget.customer!.id,
+          _controllerFirstName.text,
+          _controllerLastName.text,
+          _controllerAddress.text,
+          birthday,
+        );
+
+        // Update the customer in the database
+        customerDAO.updateCustomer(updatedCustomer);
+
+        // Show a success Snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Customer updated successfully'),
+            backgroundColor: Colors.teal,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        );
+
+        // Pass the updated customer back to the previous screen
+        Navigator.pop(context, updatedCustomer);
+      } catch (e) {
+        print("Error updating customer: $e");
       }
     });
   }
@@ -73,7 +160,7 @@ class AddCustomerState extends State<AddCustomer> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Instructions'),
-          content: Text('To add a customer, fill in the fields and click the "Add Customer" button.'),
+          content: Text('To add or update a customer, fill in the fields and click the "Save Customer" button.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -87,6 +174,15 @@ class AddCustomerState extends State<AddCustomer> {
     );
   }
 
+  void _refreshPage() {
+    setState(() {
+      _controllerFirstName.clear();
+      _controllerLastName.clear();
+      _controllerAddress.clear();
+      _dateTimeControllerBirthday.clear();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,30 +192,37 @@ class AddCustomerState extends State<AddCustomer> {
     _controllerAddress = TextEditingController();
     _dateTimeControllerBirthday = TextEditingController();
 
-    // Retrieve saved inputs from EncryptedSharedPreferences
-    encryptedSharedPreferences.getString('first_name').then((value) {
-      if (value != null) {
-        _controllerFirstName.text = value;
-      }
-    });
+    if (widget.customer != null) {
+      _controllerFirstName.text = widget.customer!.firstName;
+      _controllerLastName.text = widget.customer!.lastName;
+      _controllerAddress.text = widget.customer!.address;
+      _dateTimeControllerBirthday.text = DateFormat('yyyy-MM-dd').format(widget.customer!.birthday);
+    } else {
+      // Retrieve saved inputs from EncryptedSharedPreferences
+      encryptedSharedPreferences.getString('first_name').then((value) {
+        if (value != null) {
+          _controllerFirstName.text = value;
+        }
+      });
 
-    encryptedSharedPreferences.getString('last_name').then((value) {
-      if (value != null) {
-        _controllerLastName.text = value;
-      }
-    });
+      encryptedSharedPreferences.getString('last_name').then((value) {
+        if (value != null) {
+          _controllerLastName.text = value;
+        }
+      });
 
-    encryptedSharedPreferences.getString('address').then((value) {
-      if (value != null) {
-        _controllerAddress.text = value;
-      }
-    });
+      encryptedSharedPreferences.getString('address').then((value) {
+        if (value != null) {
+          _controllerAddress.text = value;
+        }
+      });
 
-    encryptedSharedPreferences.getString('birthday').then((value) {
-      if (value != null) {
-        _dateTimeControllerBirthday.text = value;
-      }
-    });
+      encryptedSharedPreferences.getString('birthday').then((value) {
+        if (value != null) {
+          _dateTimeControllerBirthday.text = value;
+        }
+      });
+    }
 
     $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
       setState(() {
@@ -142,12 +245,15 @@ class AddCustomerState extends State<AddCustomer> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Add Customer"),
+        title: Text(widget.customer == null ? "Add Customer" : "Update Customer"),
         actions: [
           IconButton(
-
             icon: Icon(Icons.info),
             onPressed: _showInstructions,
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _refreshPage,
           ),
           OutlinedButton(onPressed: () { Navigator.pop(context); }, child: Text("Go Back")),
         ],
@@ -201,8 +307,8 @@ class AddCustomerState extends State<AddCustomer> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: addCustomer,
-              child: Text("Add Customer"),
+              onPressed: widget.customer == null ? addCustomer : updateCustomer,
+              child: Text(widget.customer == null ? "Add Customer" : "Update Customer"),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
