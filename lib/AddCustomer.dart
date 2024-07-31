@@ -5,9 +5,13 @@ import 'Customer.dart';
 import 'CustomerDAO.dart';
 import 'Database.dart';
 
+/// A widget for adding or updating a customer.
 class AddCustomer extends StatefulWidget {
   final Customer? customer;
 
+  /// Creates an instance of [AddCustomer].
+  ///
+  /// [customer] is an optional parameter. If provided, the widget will allow updating the customer.
   AddCustomer({this.customer});
 
   @override
@@ -16,6 +20,7 @@ class AddCustomer extends StatefulWidget {
   }
 }
 
+/// The state class for [AddCustomer] that manages the form for adding or updating a customer.
 class AddCustomerState extends State<AddCustomer> {
   late TextEditingController _controllerFirstName;
   late TextEditingController _controllerLastName;
@@ -24,7 +29,11 @@ class AddCustomerState extends State<AddCustomer> {
   late CustomerDAO customerDAO;
   final EncryptedSharedPreferences encryptedSharedPreferences = EncryptedSharedPreferences();
 
-  Future<void> _selectDateTime(BuildContext context, TextEditingController controller) async {
+  /// Selects a date using a date picker and updates the given [controller].
+  ///
+  /// [context] is the build context.
+  /// [controller] is the [TextEditingController] to update with the selected date.
+  Future<void> selectDateTime(BuildContext context, TextEditingController controller) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -40,6 +49,7 @@ class AddCustomerState extends State<AddCustomer> {
     }
   }
 
+  /// Adds a new customer to the database.
   void addCustomer() {
     setState(() {
       // Check if all fields have a value
@@ -65,7 +75,7 @@ class AddCustomerState extends State<AddCustomer> {
       try {
         final DateTime birthday = DateFormat('yyyy-MM-dd').parse(_dateTimeControllerBirthday.text);
 
-        // Increment the ID and create a new Customer
+        /// Increment the ID and create a new Customer
         var newCustomer = Customer(
           Customer.ID++,
           _controllerFirstName.text,
@@ -97,6 +107,7 @@ class AddCustomerState extends State<AddCustomer> {
     });
   }
 
+  /// Updates an existing customer in the database.
   void updateCustomer() {
     setState(() {
       // Check if all fields have a value
@@ -154,6 +165,7 @@ class AddCustomerState extends State<AddCustomer> {
     });
   }
 
+  /// Shows an instructions dialog.
   void _showInstructions() {
     showDialog(
       context: context,
@@ -174,6 +186,7 @@ class AddCustomerState extends State<AddCustomer> {
     );
   }
 
+  /// Refreshes the page by clearing all text fields.
   void _refreshPage() {
     setState(() {
       _controllerFirstName.clear();
@@ -273,7 +286,7 @@ class AddCustomerState extends State<AddCustomer> {
                 encryptedSharedPreferences.setString('first_name', value);
               },
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 4),
             TextField(
               controller: _controllerLastName,
               decoration: InputDecoration(
@@ -284,7 +297,7 @@ class AddCustomerState extends State<AddCustomer> {
                 encryptedSharedPreferences.setString('last_name', value);
               },
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 4),
             TextField(
               controller: _controllerAddress,
               decoration: InputDecoration(
@@ -295,7 +308,7 @@ class AddCustomerState extends State<AddCustomer> {
                 encryptedSharedPreferences.setString('address', value);
               },
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 4),
             TextField(
               controller: _dateTimeControllerBirthday,
               readOnly: true,
@@ -303,14 +316,14 @@ class AddCustomerState extends State<AddCustomer> {
                 labelText: 'Select Birthday',
                 suffixIcon: Icon(Icons.calendar_today),
               ),
-              onTap: () => _selectDateTime(context, _dateTimeControllerBirthday),
+              onTap: () => selectDateTime(context, _dateTimeControllerBirthday),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 4),
             ElevatedButton(
               onPressed: widget.customer == null ? addCustomer : updateCustomer,
               child: Text(widget.customer == null ? "Add Customer" : "Update Customer"),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.symmetric(vertical: 10.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),

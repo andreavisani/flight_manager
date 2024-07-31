@@ -5,6 +5,7 @@ import 'CustomerDAO.dart';
 import 'Database.dart';
 import 'AddCustomer.dart';
 
+/// A stateful widget that displays a list of customers and their details.
 class CustomersPage extends StatefulWidget {
   @override
   State<CustomersPage> createState() {
@@ -12,16 +13,23 @@ class CustomersPage extends StatefulWidget {
   }
 }
 
+/// The state class for [CustomersPage] that manages the list of customers and their interactions.
 class CustomersPageState extends State<CustomersPage> {
+  /// The list of customers.
   var customer = <Customer>[];
+  /// The DAO for managing customer data.
   late CustomerDAO customerDAO;
+  /// The currently selected customer.
   Customer? selectedCustomer;
 
   @override
   void initState() {
     super.initState();
 
-    $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
+    $FloorFlightManagerDatabase
+        .databaseBuilder('app_database.db')
+        .build()
+        .then((database) {
       customerDAO = database.customerDAO;
 
       // Fetch the customer list from the database
@@ -33,13 +41,18 @@ class CustomersPageState extends State<CustomersPage> {
     });
   }
 
+  /// Selects a customer to display their details.
+  /// [customer] is the customer to be selected.
   void selectCustomer(Customer customer) {
     setState(() {
       selectedCustomer = customer;
     });
   }
 
-  void _showDeleteDialog(BuildContext context, Customer customer) {
+  /// Shows a dialog to confirm deletion of a customer.
+  /// [context] is the build context.
+  /// [customer] is the customer to be deleted.
+  void showDeleteDialog(BuildContext context, Customer customer) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -55,7 +68,7 @@ class CustomersPageState extends State<CustomersPage> {
             ),
             TextButton(
               onPressed: () {
-                _deleteCustomer(customer);
+                deleteCustomer(customer);
                 Navigator.of(context).pop();
               },
               child: Text('Yes'),
@@ -66,7 +79,10 @@ class CustomersPageState extends State<CustomersPage> {
     );
   }
 
-  void _deleteCustomer(Customer customer) {
+  /// Deletes a customer from the database.
+  ///
+  /// [customer] is the customer to be deleted.
+  void deleteCustomer(Customer customer) {
     customerDAO.deleteCustomer(customer).then((_) {
       // Fetch updated customer list after deletion
       customerDAO.selectEverything().then((updatedList) {
@@ -112,7 +128,10 @@ class CustomersPageState extends State<CustomersPage> {
     });
   }
 
-  void _showInstructionsDialog(BuildContext context) {
+  /// Shows an instructions dialog.
+  ///
+  /// [context] is the build context.
+  void showInstructionsDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -132,6 +151,7 @@ class CustomersPageState extends State<CustomersPage> {
     );
   }
 
+  /// Refreshes the customer list by fetching updated data from the database.
   void _refreshCustomerList() {
     customerDAO.selectEverything().then((listOfItems) {
       setState(() {
@@ -161,11 +181,11 @@ class CustomersPageState extends State<CustomersPage> {
         actions: [
           Row(
             children: [
-
+              Text("Info:"),
               IconButton(
                 icon: Icon(Icons.info),
                 onPressed: () {
-                  _showInstructionsDialog(context);
+                  showInstructionsDialog(context);
                 },
               ),
               IconButton(
@@ -174,7 +194,11 @@ class CustomersPageState extends State<CustomersPage> {
               ),
             ],
           ),
-          OutlinedButton(onPressed: () { Navigator.pop(context); }, child: Text("Go Back")),
+          OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Go Back")),
         ],
       ),
       body: responsiveLayout(context),
@@ -197,6 +221,11 @@ class CustomersPageState extends State<CustomersPage> {
     );
   }
 
+  /// Builds the responsive layout for the page based on screen size.
+  ///
+  /// [context] is the build context.
+  ///
+  /// Returns a widget representing the layout.
   Widget responsiveLayout(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var width = size.width;
@@ -228,7 +257,8 @@ class CustomersPageState extends State<CustomersPage> {
                           selectCustomer(customer[index]);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
                           child: Row(
                             children: [
                               Expanded(
@@ -271,18 +301,24 @@ class CustomersPageState extends State<CustomersPage> {
                       children: [
                         Text(
                           "Details",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
                         Text("ID: ${selectedCustomer!.id}"),
                         SizedBox(height: 4),
-                        Text("First Name: ${selectedCustomer!.firstName}", style: TextStyle(fontSize: 16)),
+                        Text("First Name: ${selectedCustomer!.firstName}",
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text("Last Name: ${selectedCustomer!.lastName}", style: TextStyle(fontSize: 16)),
+                        Text("Last Name: ${selectedCustomer!.lastName}",
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text("Address: ${selectedCustomer!.address}", style: TextStyle(fontSize: 16)),
+                        Text("Address: ${selectedCustomer!.address}",
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text("Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
+                        Text(
+                            "Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}",
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
                         Row(
                           children: [
@@ -292,12 +328,15 @@ class CustomersPageState extends State<CustomersPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AddCustomer(customer: selectedCustomer),
+                                      builder: (context) => AddCustomer(
+                                          customer: selectedCustomer),
                                     ),
                                   ).then((updatedCustomer) {
-                                    if (updatedCustomer != null && updatedCustomer is Customer) {
+                                    if (updatedCustomer != null &&
+                                        updatedCustomer is Customer) {
                                       setState(() {
-                                        final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
+                                        final index = customer.indexWhere(
+                                            (c) => c.id == updatedCustomer.id);
                                         if (index != -1) {
                                           customer[index] = updatedCustomer;
                                         }
@@ -320,7 +359,7 @@ class CustomersPageState extends State<CustomersPage> {
                             ElevatedButton.icon(
                               onPressed: () {
                                 if (selectedCustomer != null) {
-                                  _showDeleteDialog(context, selectedCustomer!);
+                                  showDeleteDialog(context, selectedCustomer!);
                                 }
                               },
                               icon: Icon(Icons.delete),
@@ -364,7 +403,8 @@ class CustomersPageState extends State<CustomersPage> {
                     selectCustomer(customer[index]);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
                     child: Row(
                       children: [
                         Expanded(
@@ -407,13 +447,18 @@ class CustomersPageState extends State<CustomersPage> {
                     children: [
                       Text("ID: ${selectedCustomer!.id}"),
                       SizedBox(height: 10),
-                      Text("First Name: ${selectedCustomer!.firstName}", style: TextStyle(fontSize: 16)),
+                      Text("First Name: ${selectedCustomer!.firstName}",
+                          style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text("Last Name: ${selectedCustomer!.lastName}", style: TextStyle(fontSize: 16)),
+                      Text("Last Name: ${selectedCustomer!.lastName}",
+                          style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text("Address: ${selectedCustomer!.address}", style: TextStyle(fontSize: 16)),
+                      Text("Address: ${selectedCustomer!.address}",
+                          style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text("Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
+                      Text(
+                          "Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}",
+                          style: TextStyle(fontSize: 16)),
                       SizedBox(height: 20),
                       Row(
                         children: [
@@ -423,12 +468,15 @@ class CustomersPageState extends State<CustomersPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AddCustomer(customer: selectedCustomer),
+                                    builder: (context) =>
+                                        AddCustomer(customer: selectedCustomer),
                                   ),
                                 ).then((updatedCustomer) {
-                                  if (updatedCustomer != null && updatedCustomer is Customer) {
+                                  if (updatedCustomer != null &&
+                                      updatedCustomer is Customer) {
                                     setState(() {
-                                      final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
+                                      final index = customer.indexWhere(
+                                          (c) => c.id == updatedCustomer.id);
                                       if (index != -1) {
                                         customer[index] = updatedCustomer;
                                       }
@@ -451,7 +499,7 @@ class CustomersPageState extends State<CustomersPage> {
                           ElevatedButton.icon(
                             onPressed: () {
                               if (selectedCustomer != null) {
-                                _showDeleteDialog(context, selectedCustomer!);
+                                showDeleteDialog(context, selectedCustomer!);
                               }
                             },
                             icon: Icon(Icons.delete),
