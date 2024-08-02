@@ -1,11 +1,13 @@
 import 'package:flight_manager/AddFlight.dart';
 import 'package:flight_manager/AppLocalizations.dart';
+import 'package:flight_manager/ReservationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'AddCustomer.dart';
 import 'AppLocalizations.dart';
 import 'package:flutter/rendering.dart';
 import 'FlightsPage.dart';
+import 'ReservationPage.dart';
 import 'customerlist.dart';
 
 
@@ -70,7 +72,7 @@ class _MyAppState extends State<MyApp>{
           _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
           state?.changeLanguage(newLocale);
         }),
-
+        '/reservations': (context) => ReservationPage(),
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -124,9 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Airplanes"),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/reservations');
+              },
               child: Text("Reservations"),
             ),
+
           ],
         ),
       ),
