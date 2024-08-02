@@ -206,6 +206,7 @@ class CustomersPageState extends State<CustomersPage> {
           ),
           OutlinedButton(
             onPressed: () {
+              widget.setLocale(Locale("en", "CA"));
               Navigator.pop(context);
             },
             child: Text(AppLocalizations.of(context)!.translate('go_back')!),
