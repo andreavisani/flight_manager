@@ -43,7 +43,9 @@ class _MyAppState extends State<MyApp>{
       //TRANSLATION
       supportedLocales: [
         Locale("en", "CA"),
-        Locale("it", "IT")
+        Locale("it", "IT"),
+        Locale('ne', 'NP'),
+        Locale("en", "US"),
       ],
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -77,16 +79,6 @@ class _MyAppState extends State<MyApp>{
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en', 'US'),
-        Locale('ne', 'NP'),
-      ],
-      locale: locale, // Set the locale
     );
   }
 }
