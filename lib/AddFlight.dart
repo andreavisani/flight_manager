@@ -1,7 +1,6 @@
 import 'package:flight_manager/Flight.dart';
 import 'package:flight_manager/FlightDAO.dart';
 import 'package:flight_manager/main.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'Database.dart';
@@ -193,6 +192,9 @@ class AddFlightState extends State<AddFlight> {
     });
   }
 
+  /**
+   * Displays an alert dialog with instructions
+   */
   void showUsageInfo(BuildContext contex){
     showDialog(
       context: context,
@@ -222,6 +224,9 @@ class AddFlightState extends State<AddFlight> {
     );
   }
 
+  /**
+   * Displays and alert dialog that offers the opportunity to switch language
+   */
   void showLanguageInfo(BuildContext contex){
     showDialog(
       context: context,
@@ -260,10 +265,15 @@ class AddFlightState extends State<AddFlight> {
   void initState() {
     super.initState();
 
+    ///Controller for departure city
     _controllerDepartureCity = TextEditingController();
+    ///Controller for destination city
     _controllerDestinationCity = TextEditingController();
+    ///Controller for departure time
     _dateTimeControllerDeparture = TextEditingController();
+    ///Controller for arrival time
     _dateTimeControllerArrival = TextEditingController();
+    ///EncriptedSharedPreferences
     savedData = EncryptedSharedPreferences();
 
     savedData.getString("arrivalCity").then((unencryptedString) {
