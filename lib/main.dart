@@ -1,9 +1,13 @@
 import 'package:flight_manager/AddFlight.dart';
 import 'package:flight_manager/AppLocalizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'AddCustomer.dart';
+import 'AppLocalizations.dart';
+import 'package:flutter/rendering.dart';
 import 'FlightsPage.dart';
+import 'customerlist.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -23,9 +27,6 @@ class MyApp extends StatefulWidget {
   }
 
 }
-
-
-
 
 class _MyAppState extends State<MyApp>{
   var locale = Locale("en", "CA");
@@ -53,11 +54,21 @@ class _MyAppState extends State<MyApp>{
       locale: locale,
 
 
+
       //LIST OF ALL PAGES
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
         '/flights': (context) => FlightsPage(),
         '/addFlight': (context) => AddFlight(),
+        '/customer': (context) => CustomersPage(setLocale: (newLocale) {
+          _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+          state?.changeLanguage(newLocale);
+        }),
+        '/addCustomer': (context) => AddCustomer(setLocale: (newLocale) {
+          _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+          state?.changeLanguage(newLocale);
+        }),
+
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -66,6 +77,16 @@ class _MyAppState extends State<MyApp>{
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', 'US'),
+        Locale('ne', 'NP'),
+      ],
+      locale: locale, // Set the locale
     );
   }
 }
@@ -80,10 +101,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
 
@@ -96,10 +115,26 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(onPressed: () { Navigator.pushNamed(context, '/flights');} , child: Text("Flights"),),
-            ElevatedButton(onPressed: () {} , child: Text("Customers")),
-            ElevatedButton(onPressed: () {} , child: Text("Airplanes")),
-            ElevatedButton(onPressed: () {} , child: Text("Reservations")),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/flights');
+              },
+              child: Text("Flights"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/customer');
+              },
+              child: Text("Customers"),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text("Airplanes"),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text("Reservations"),
+            ),
           ],
         ),
       ),

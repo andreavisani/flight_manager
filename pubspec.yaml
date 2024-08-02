@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_localizations:
+    sdk: flutter
   flutter:
     sdk: flutter
   floor: ^1.5.0
@@ -37,10 +39,14 @@ dependencies:
 
 
 
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   encrypted_shared_preferences: ^3.0.1
+  shared_preferences: ^2.2.3
+  dartdoc: ^8.0.8
+
 
 dev_dependencies:
   floor_generator: ^1.4.0
@@ -69,7 +75,13 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/translations/en.json
+
+    - assets/translations/ne.json
+
+  #   - images/a_dot_burr.jpeg
+
     - assets/translations/it.json
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

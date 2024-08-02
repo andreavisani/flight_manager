@@ -10,9 +10,10 @@ import 'AppLocalizations.dart';
 class AddFlight extends StatefulWidget {
   @override
   State<AddFlight> createState() {
-    return AddFlightState();
+    return AddCustomerState();
   }
 }
+
 
 class AddFlightState extends State<AddFlight> {
   /// controller for departure city

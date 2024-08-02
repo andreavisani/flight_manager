@@ -5,14 +5,20 @@ import 'TypeConverter.dart';
 
 import 'Flight.dart';
 import 'FlightDAO.dart';
+import 'Customer.dart';
+import 'CustomerDAO.dart';
 
 part 'Database.g.dart';
 
-@Database(version: 1, entities: [Flight])
+@Database(version: 1, entities: [Flight, Customer])
 @TypeConverters([DateTimeConverter])
 abstract class FlightManagerDatabase extends FloorDatabase{
 
+
+  CustomerDAO get customerDAO;
+
   ///get interface to database
+
   FlightDAO get GetDao; // 1 function for giving access to insert, update delete
 
 
