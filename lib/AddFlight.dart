@@ -1,7 +1,6 @@
 import 'package:flight_manager/Flight.dart';
 import 'package:flight_manager/FlightDAO.dart';
 import 'package:flight_manager/main.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'Database.dart';
@@ -150,16 +149,23 @@ class AddFlightState extends State<AddFlight> {
     }
     if (_dateTimeControllerDeparture.value.text == "" || _dateTimeControllerDeparture.value.text == null ){
       message += "Departure time\n";
-      thereIsDepartureTime = true;
+
       valid = false;
     }
-    if (_dateTimeControllerArrival.value.text == "" || _dateTimeControllerArrival.value.text == null ){
-      message += "Arrival time\n";
-      thereIsArrivalTime = true;
-      valid = false;
+    else{
+      thereIsDepartureTime = true;
     }
 
-    /*
+    if (_dateTimeControllerArrival.value.text == "" || _dateTimeControllerArrival.value.text == null ){
+      message += "Arrival time\n";
+      thereIsArrivalTime = false;
+      valid = false;
+    }
+    else{
+      thereIsArrivalTime = true;
+    }
+
+
     if (thereIsArrivalTime && thereIsDepartureTime){
       DateTime departureTime = DateFormat('yyyy-MM-dd HH:mm').parse(_dateTimeControllerDeparture.text);
       DateTime arrivalTime = DateFormat('yyyy-MM-dd HH:mm').parse(_dateTimeControllerArrival.text);
@@ -169,7 +175,7 @@ class AddFlightState extends State<AddFlight> {
         valid = false;
       }
     }
-     */
+
 
     showErrorMessage(context, message);
     return valid;
@@ -193,6 +199,9 @@ class AddFlightState extends State<AddFlight> {
     });
   }
 
+  /**
+   * Displays an alert dialog with instructions
+   */
   void showUsageInfo(BuildContext contex){
     showDialog(
       context: context,
@@ -222,6 +231,9 @@ class AddFlightState extends State<AddFlight> {
     );
   }
 
+  /**
+   * Displays and alert dialog that offers the opportunity to switch language
+   */
   void showLanguageInfo(BuildContext contex){
     showDialog(
       context: context,
@@ -260,10 +272,15 @@ class AddFlightState extends State<AddFlight> {
   void initState() {
     super.initState();
 
+    ///Controller for departure city
     _controllerDepartureCity = TextEditingController();
+    ///Controller for destination city
     _controllerDestinationCity = TextEditingController();
+    ///Controller for departure time
     _dateTimeControllerDeparture = TextEditingController();
+    ///Controller for arrival time
     _dateTimeControllerArrival = TextEditingController();
+    ///EncriptedSharedPreferences
     savedData = EncryptedSharedPreferences();
 
     savedData.getString("arrivalCity").then((unencryptedString) {

@@ -177,8 +177,10 @@ class PersonalInfoState extends State<FlightsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              ///Resets the language to english, to avoid crashes with other languages
               ElevatedButton(
                 onPressed: () {
+                  MyApp.setLocale(context, new Locale("en", "CA"));
                   Navigator.pushNamed(context, '/homePage');
                 },
                 style: ElevatedButton.styleFrom(
