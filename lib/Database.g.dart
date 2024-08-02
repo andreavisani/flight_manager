@@ -79,6 +79,8 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
 
   FlightDAO? _GetDaoInstance;
 
+  ReservationDAO? _ReservationDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -104,6 +106,8 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
             'CREATE TABLE IF NOT EXISTS `Flight` (`id` INTEGER NOT NULL, `departureTime` INTEGER NOT NULL, `arrivalTime` INTEGER NOT NULL, `departureCity` TEXT NOT NULL, `destinationCity` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Customer` (`id` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `address` TEXT NOT NULL, `birthday` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Reservation` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL, `flightId` INTEGER NOT NULL, `reservationDate` TEXT NOT NULL, `reservationName` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -119,6 +123,12 @@ class _$FlightManagerDatabase extends FlightManagerDatabase {
   @override
   FlightDAO get GetDao {
     return _GetDaoInstance ??= _$FlightDAO(database, changeListener);
+  }
+
+  @override
+  ReservationDAO get ReservationDao {
+    return _ReservationDaoInstance ??=
+        _$ReservationDAO(database, changeListener);
   }
 }
 
@@ -277,6 +287,97 @@ class _$FlightDAO extends FlightDAO {
   @override
   Future<int> deleteFlight(Flight flight) {
     return _flightDeletionAdapter.deleteAndReturnChangedRows(flight);
+  }
+}
+
+class _$ReservationDAO extends ReservationDAO {
+  _$ReservationDAO(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _reservationInsertionAdapter = InsertionAdapter(
+            database,
+            'Reservation',
+            (Reservation item) => <String, Object?>{
+                  'id': item.id,
+                  'customerId': item.customerId,
+                  'flightId': item.flightId,
+                  'reservationDate': item.reservationDate,
+                  'reservationName': item.reservationName
+                }),
+        _reservationUpdateAdapter = UpdateAdapter(
+            database,
+            'Reservation',
+            ['id'],
+            (Reservation item) => <String, Object?>{
+                  'id': item.id,
+                  'customerId': item.customerId,
+                  'flightId': item.flightId,
+                  'reservationDate': item.reservationDate,
+                  'reservationName': item.reservationName
+                }),
+        _reservationDeletionAdapter = DeletionAdapter(
+            database,
+            'Reservation',
+            ['id'],
+            (Reservation item) => <String, Object?>{
+                  'id': item.id,
+                  'customerId': item.customerId,
+                  'flightId': item.flightId,
+                  'reservationDate': item.reservationDate,
+                  'reservationName': item.reservationName
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Reservation> _reservationInsertionAdapter;
+
+  final UpdateAdapter<Reservation> _reservationUpdateAdapter;
+
+  final DeletionAdapter<Reservation> _reservationDeletionAdapter;
+
+  @override
+  Future<List<Reservation>> selectEverything() async {
+    return _queryAdapter.queryList('SELECT * FROM Reservation',
+        mapper: (Map<String, Object?> row) => Reservation(
+            id: row['id'] as int?,
+            customerId: row['customerId'] as int,
+            flightId: row['flightId'] as int,
+            reservationDate: row['reservationDate'] as String,
+            reservationName: row['reservationName'] as String));
+  }
+
+  @override
+  Future<Reservation?> getReservationById(int id) async {
+    return _queryAdapter.query('SELECT * FROM Reservation WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Reservation(
+            id: row['id'] as int?,
+            customerId: row['customerId'] as int,
+            flightId: row['flightId'] as int,
+            reservationDate: row['reservationDate'] as String,
+            reservationName: row['reservationName'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<int> insertReservation(Reservation reservation) {
+    return _reservationInsertionAdapter.insertAndReturnId(
+        reservation, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateReservation(Reservation reservation) async {
+    await _reservationUpdateAdapter.update(
+        reservation, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteReservation(Reservation reservation) async {
+    await _reservationDeletionAdapter.delete(reservation);
   }
 }
 
