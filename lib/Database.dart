@@ -14,8 +14,11 @@ part 'Database.g.dart';
 @TypeConverters([DateTimeConverter])
 abstract class FlightManagerDatabase extends FloorDatabase{
 
-  //get interface to database
+
   CustomerDAO get customerDAO;
+
+  ///get interface to database
+
   FlightDAO get GetDao; // 1 function for giving access to insert, update delete
 
 

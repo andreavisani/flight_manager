@@ -1,8 +1,10 @@
 import 'package:flight_manager/AddFlight.dart';
+import 'package:flight_manager/AppLocalizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'AddCustomer.dart';
 import 'AppLocalizations.dart';
+import 'package:flutter/rendering.dart';
 import 'FlightsPage.dart';
 import 'customerlist.dart';
 
@@ -23,21 +25,36 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() {
     return _MyAppState();
   }
+
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp>{
   var locale = Locale("en", "CA");
 
-  void changeLanguage(Locale newLocale) {
-    setState(() {
-      locale = newLocale;
-    });
+  void changeLanguage(Locale newLanguage) {
+    setState(() { locale = newLanguage; });
   }
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+
+      //TRANSLATION
+      supportedLocales: [
+        Locale("en", "CA"),
+        Locale("it", "IT")
+      ],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      //DEFAULT LANGUAGE OF THE APP (en, CA)
+      locale: locale,
+
+
+
       //LIST OF ALL PAGES
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
@@ -51,8 +68,10 @@ class _MyAppState extends State<MyApp> {
           _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
           state?.changeLanguage(newLocale);
         }),
+
       },
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -86,10 +105,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
         title: Text(widget.title),
       ),
       body: Center(
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
