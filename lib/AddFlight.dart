@@ -149,16 +149,23 @@ class AddFlightState extends State<AddFlight> {
     }
     if (_dateTimeControllerDeparture.value.text == "" || _dateTimeControllerDeparture.value.text == null ){
       message += "Departure time\n";
-      thereIsDepartureTime = true;
+
       valid = false;
     }
-    if (_dateTimeControllerArrival.value.text == "" || _dateTimeControllerArrival.value.text == null ){
-      message += "Arrival time\n";
-      thereIsArrivalTime = true;
-      valid = false;
+    else{
+      thereIsDepartureTime = true;
     }
 
-    /*
+    if (_dateTimeControllerArrival.value.text == "" || _dateTimeControllerArrival.value.text == null ){
+      message += "Arrival time\n";
+      thereIsArrivalTime = false;
+      valid = false;
+    }
+    else{
+      thereIsArrivalTime = true;
+    }
+
+
     if (thereIsArrivalTime && thereIsDepartureTime){
       DateTime departureTime = DateFormat('yyyy-MM-dd HH:mm').parse(_dateTimeControllerDeparture.text);
       DateTime arrivalTime = DateFormat('yyyy-MM-dd HH:mm').parse(_dateTimeControllerArrival.text);
@@ -168,7 +175,7 @@ class AddFlightState extends State<AddFlight> {
         valid = false;
       }
     }
-     */
+
 
     showErrorMessage(context, message);
     return valid;
