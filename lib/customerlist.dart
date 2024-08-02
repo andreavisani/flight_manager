@@ -1,38 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'Customer.dart';
 import 'CustomerDAO.dart';
 import 'Database.dart';
 import 'AddCustomer.dart';
+import 'AppLocalizations.dart';
 
-/// A stateful widget that displays a list of customers and their details.
+/// A widget that displays a list of customers and allows adding, updating, and deleting customers.
 class CustomersPage extends StatefulWidget {
+  /// A callback function to set the locale for the app.
+  final Function(Locale) setLocale;
+
+  /// Creates an instance of [CustomersPage].
+  const CustomersPage({super.key, required this.setLocale});
+
   @override
   State<CustomersPage> createState() {
     return CustomersPageState();
   }
 }
 
-/// The state class for [CustomersPage] that manages the list of customers and their interactions.
+/// The state class for [CustomersPage] that manages the customer list and operations.
 class CustomersPageState extends State<CustomersPage> {
-  /// The list of customers.
   var customer = <Customer>[];
-  /// The DAO for managing customer data.
   late CustomerDAO customerDAO;
-  /// The currently selected customer.
   Customer? selectedCustomer;
 
   @override
   void initState() {
     super.initState();
 
-    $FloorFlightManagerDatabase
-        .databaseBuilder('app_database.db')
-        .build()
-        .then((database) {
+    // Initialize the database and load customers
+    $FloorFlightManagerDatabase.databaseBuilder('app_database.db').build().then((database) {
       customerDAO = database.customerDAO;
 
-      // Fetch the customer list from the database
       customerDAO.selectEverything().then((listOfItems) {
         setState(() {
           customer.addAll(listOfItems);
@@ -41,7 +41,8 @@ class CustomersPageState extends State<CustomersPage> {
     });
   }
 
-  /// Selects a customer to display their details.
+  /// Selects a customer from the list.
+  ///
   /// [customer] is the customer to be selected.
   void selectCustomer(Customer customer) {
     setState(() {
@@ -49,7 +50,8 @@ class CustomersPageState extends State<CustomersPage> {
     });
   }
 
-  /// Shows a dialog to confirm deletion of a customer.
+  /// Shows a dialog to confirm the deletion of a customer.
+  ///
   /// [context] is the build context.
   /// [customer] is the customer to be deleted.
   void showDeleteDialog(BuildContext context, Customer customer) {
@@ -57,21 +59,21 @@ class CustomersPageState extends State<CustomersPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Customer'),
-          content: Text('Are you sure you want to delete this customer?'),
+          title: Text(AppLocalizations.of(context)!.translate('delete_customer')!),
+          content: Text(AppLocalizations.of(context)!.translate('confirm_delete_customer')!),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('No'),
+              child: Text(AppLocalizations.of(context)!.translate('no')!),
             ),
             TextButton(
               onPressed: () {
                 deleteCustomer(customer);
                 Navigator.of(context).pop();
               },
-              child: Text('Yes'),
+              child: Text(AppLocalizations.of(context)!.translate('yes')!),
             ),
           ],
         );
@@ -84,15 +86,14 @@ class CustomersPageState extends State<CustomersPage> {
   /// [customer] is the customer to be deleted.
   void deleteCustomer(Customer customer) {
     customerDAO.deleteCustomer(customer).then((_) {
-      // Fetch updated customer list after deletion
       customerDAO.selectEverything().then((updatedList) {
         setState(() {
           this.customer = updatedList;
-          selectedCustomer = null; // Deselect customer after deletion
+          selectedCustomer = null;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Customer deleted'),
+            content: Text(AppLocalizations.of(context)!.translate('customer_deleted')!),
             backgroundColor: Colors.teal,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -101,10 +102,9 @@ class CustomersPageState extends State<CustomersPage> {
           ),
         );
       }).catchError((error) {
-        // Handle any errors that occur during fetching
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error fetching updated customer list'),
+            content: Text(AppLocalizations.of(context)!.translate('error_fetching_customer_list')!),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -114,10 +114,9 @@ class CustomersPageState extends State<CustomersPage> {
         );
       });
     }).catchError((error) {
-      // Handle any errors that occur during deletion
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error deleting customer'),
+          content: Text(AppLocalizations.of(context)!.translate('error_deleting_customer')!),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -136,14 +135,14 @@ class CustomersPageState extends State<CustomersPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Instructions'),
-          content: Text('Select a customer to view their details.'),
+          title: Text(AppLocalizations.of(context)!.translate('instructions')!),
+          content: Text(AppLocalizations.of(context)!.translate('select_customer_to_view_details')!),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: Text(AppLocalizations.of(context)!.translate('close')!),
             ),
           ],
         );
@@ -151,17 +150,17 @@ class CustomersPageState extends State<CustomersPage> {
     );
   }
 
-  /// Refreshes the customer list by fetching updated data from the database.
+  /// Refreshes the customer list by re-fetching all customers from the database.
   void _refreshCustomerList() {
     customerDAO.selectEverything().then((listOfItems) {
       setState(() {
         customer = listOfItems;
-        selectedCustomer = null; // Deselect customer after refresh
+        selectedCustomer = null;
       });
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error refreshing customer list'),
+          content: Text(AppLocalizations.of(context)!.translate('error_refreshing_customer_list')!),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -177,11 +176,22 @@ class CustomersPageState extends State<CustomersPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Customers"),
+        title: Text(AppLocalizations.of(context)!.translate('title_customers')!),
         actions: [
+          OutlinedButton(
+            onPressed: () {
+              widget.setLocale(Locale("ne", "NP"));
+            },
+            child: Text(AppLocalizations.of(context)!.translate('switch_to_nepali')!),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              widget.setLocale(Locale("en", "US"));
+            },
+            child: Text(AppLocalizations.of(context)!.translate('switch_to_english')!),
+          ),
           Row(
             children: [
-              Text("Info:"),
               IconButton(
                 icon: Icon(Icons.info),
                 onPressed: () {
@@ -195,10 +205,11 @@ class CustomersPageState extends State<CustomersPage> {
             ],
           ),
           OutlinedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Go Back")),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(AppLocalizations.of(context)!.translate('go_back')!),
+          ),
         ],
       ),
       body: responsiveLayout(context),
@@ -206,7 +217,7 @@ class CustomersPageState extends State<CustomersPage> {
         onPressed: () async {
           final newCustomer = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddCustomer()),
+            MaterialPageRoute(builder: (context) => AddCustomer(setLocale: widget.setLocale)),
           );
           if (newCustomer != null && newCustomer is Customer) {
             setState(() {
@@ -215,24 +226,20 @@ class CustomersPageState extends State<CustomersPage> {
           }
         },
         icon: Icon(Icons.add),
-        label: Text('Add'),
+        label: Text(AppLocalizations.of(context)!.translate('add_customer')!),
         backgroundColor: Colors.blue,
       ),
     );
   }
 
-  /// Builds the responsive layout for the page based on screen size.
+  /// Builds a responsive layout for the customer list and details.
   ///
   /// [context] is the build context.
-  ///
-  /// Returns a widget representing the layout.
   Widget responsiveLayout(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var width = size.width;
-    var height = size.height;
 
     if (width > 720) {
-      // Landscape mode
       return Row(
         children: [
           Expanded(
@@ -243,7 +250,7 @@ class CustomersPageState extends State<CustomersPage> {
                 Container(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    "Select a customer to view details",
+                    AppLocalizations.of(context)!.translate('select_customer_to_view_details')!,
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
@@ -257,8 +264,7 @@ class CustomersPageState extends State<CustomersPage> {
                           selectCustomer(customer[index]);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                           child: Row(
                             children: [
                               Expanded(
@@ -300,25 +306,19 @@ class CustomersPageState extends State<CustomersPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Details",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                          AppLocalizations.of(context)!.translate('details')!,
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
                         Text("ID: ${selectedCustomer!.id}"),
                         SizedBox(height: 4),
-                        Text("First Name: ${selectedCustomer!.firstName}",
-                            style: TextStyle(fontSize: 16)),
+                        Text("${AppLocalizations.of(context)!.translate('first_name')}: ${selectedCustomer!.firstName}", style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text("Last Name: ${selectedCustomer!.lastName}",
-                            style: TextStyle(fontSize: 16)),
+                        Text("${AppLocalizations.of(context)!.translate('last_name')}: ${selectedCustomer!.lastName}", style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text("Address: ${selectedCustomer!.address}",
-                            style: TextStyle(fontSize: 16)),
+                        Text("${AppLocalizations.of(context)!.translate('address')}: ${selectedCustomer!.address}", style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
-                        Text(
-                            "Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}",
-                            style: TextStyle(fontSize: 16)),
+                        Text("${AppLocalizations.of(context)!.translate('birthday')}: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
                         SizedBox(height: 4),
                         Row(
                           children: [
@@ -328,15 +328,12 @@ class CustomersPageState extends State<CustomersPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AddCustomer(
-                                          customer: selectedCustomer),
+                                      builder: (context) => AddCustomer(customer: selectedCustomer, setLocale: widget.setLocale),
                                     ),
                                   ).then((updatedCustomer) {
-                                    if (updatedCustomer != null &&
-                                        updatedCustomer is Customer) {
+                                    if (updatedCustomer != null && updatedCustomer is Customer) {
                                       setState(() {
-                                        final index = customer.indexWhere(
-                                            (c) => c.id == updatedCustomer.id);
+                                        final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
                                         if (index != -1) {
                                           customer[index] = updatedCustomer;
                                         }
@@ -347,7 +344,7 @@ class CustomersPageState extends State<CustomersPage> {
                                 }
                               },
                               icon: Icon(Icons.update),
-                              label: Text("Update"),
+                              label: Text(AppLocalizations.of(context)!.translate('update')!),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.orange,
                                 shape: RoundedRectangleBorder(
@@ -363,7 +360,7 @@ class CustomersPageState extends State<CustomersPage> {
                                 }
                               },
                               icon: Icon(Icons.delete),
-                              label: Text("Delete"),
+                              label: Text(AppLocalizations.of(context)!.translate('delete')!),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 shape: RoundedRectangleBorder(
@@ -382,14 +379,13 @@ class CustomersPageState extends State<CustomersPage> {
         ],
       );
     } else {
-      // Portrait mode
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10.0),
             child: Text(
-              "Select a customer to view details",
+              AppLocalizations.of(context)!.translate('select_customer_to_view_details')!,
               style: TextStyle(fontSize: 18),
             ),
           ),
@@ -403,8 +399,7 @@ class CustomersPageState extends State<CustomersPage> {
                     selectCustomer(customer[index]);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                     child: Row(
                       children: [
                         Expanded(
@@ -438,7 +433,7 @@ class CustomersPageState extends State<CustomersPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Details",
+                    AppLocalizations.of(context)!.translate('details')!,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
@@ -447,18 +442,13 @@ class CustomersPageState extends State<CustomersPage> {
                     children: [
                       Text("ID: ${selectedCustomer!.id}"),
                       SizedBox(height: 10),
-                      Text("First Name: ${selectedCustomer!.firstName}",
-                          style: TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.translate('first_name')}: ${selectedCustomer!.firstName}", style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text("Last Name: ${selectedCustomer!.lastName}",
-                          style: TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.translate('last_name')}: ${selectedCustomer!.lastName}", style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text("Address: ${selectedCustomer!.address}",
-                          style: TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.translate('address')}: ${selectedCustomer!.address}", style: TextStyle(fontSize: 16)),
                       SizedBox(height: 10),
-                      Text(
-                          "Birthday: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}",
-                          style: TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.translate('birthday')}: ${selectedCustomer!.birthday.toLocal().toString().split(' ')[0]}", style: TextStyle(fontSize: 16)),
                       SizedBox(height: 20),
                       Row(
                         children: [
@@ -468,15 +458,12 @@ class CustomersPageState extends State<CustomersPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddCustomer(customer: selectedCustomer),
+                                    builder: (context) => AddCustomer(customer: selectedCustomer, setLocale: widget.setLocale),
                                   ),
                                 ).then((updatedCustomer) {
-                                  if (updatedCustomer != null &&
-                                      updatedCustomer is Customer) {
+                                  if (updatedCustomer != null && updatedCustomer is Customer) {
                                     setState(() {
-                                      final index = customer.indexWhere(
-                                          (c) => c.id == updatedCustomer.id);
+                                      final index = customer.indexWhere((c) => c.id == updatedCustomer.id);
                                       if (index != -1) {
                                         customer[index] = updatedCustomer;
                                       }
@@ -487,7 +474,7 @@ class CustomersPageState extends State<CustomersPage> {
                               }
                             },
                             icon: Icon(Icons.update),
-                            label: Text("Update"),
+                            label: Text(AppLocalizations.of(context)!.translate('update')!),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange,
                               shape: RoundedRectangleBorder(
@@ -503,7 +490,7 @@ class CustomersPageState extends State<CustomersPage> {
                               }
                             },
                             icon: Icon(Icons.delete),
-                            label: Text("Delete"),
+                            label: Text(AppLocalizations.of(context)!.translate('delete')!),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               shape: RoundedRectangleBorder(

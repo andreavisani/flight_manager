@@ -4,15 +4,17 @@ import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'Customer.dart';
 import 'CustomerDAO.dart';
 import 'Database.dart';
+import 'AppLocalizations.dart';
 
 /// A widget for adding or updating a customer.
 class AddCustomer extends StatefulWidget {
   final Customer? customer;
+  final Function(Locale) setLocale;
 
   /// Creates an instance of [AddCustomer].
   ///
   /// [customer] is an optional parameter. If provided, the widget will allow updating the customer.
-  AddCustomer({this.customer});
+  AddCustomer({this.customer, required this.setLocale});
 
   @override
   State<AddCustomer> createState() {
@@ -61,7 +63,7 @@ class AddCustomerState extends State<AddCustomer> {
         // Show a Snackbar if any field is empty
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please fill in all fields'),
+            content: Text(AppLocalizations.of(context)!.translate('please_fill_in_all_fields')!),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -90,7 +92,7 @@ class AddCustomerState extends State<AddCustomer> {
         // Show a success Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Customer added successfully'),
+            content: Text(AppLocalizations.of(context)!.translate('customer_added_successfully')!),
             backgroundColor: Colors.teal,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -119,7 +121,7 @@ class AddCustomerState extends State<AddCustomer> {
         // Show a Snackbar if any field is empty
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please fill in all fields'),
+            content: Text(AppLocalizations.of(context)!.translate('please_fill_in_all_fields')!),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -148,7 +150,7 @@ class AddCustomerState extends State<AddCustomer> {
         // Show a success Snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Customer updated successfully'),
+            content: Text(AppLocalizations.of(context)!.translate('customer_updated_successfully')!),
             backgroundColor: Colors.teal,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -171,14 +173,14 @@ class AddCustomerState extends State<AddCustomer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Instructions'),
-          content: Text('To add or update a customer, fill in the fields and click the "Save Customer" button.'),
+          title: Text(AppLocalizations.of(context)!.translate('instructions')!),
+          content: Text(AppLocalizations.of(context)!.translate('instructions_message')!),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: Text(AppLocalizations.of(context)!.translate('ok')!),
             ),
           ],
         );
@@ -206,10 +208,12 @@ class AddCustomerState extends State<AddCustomer> {
     _dateTimeControllerBirthday = TextEditingController();
 
     if (widget.customer != null) {
-      _controllerFirstName.text = widget.customer!.firstName;
-      _controllerLastName.text = widget.customer!.lastName;
-      _controllerAddress.text = widget.customer!.address;
-      _dateTimeControllerBirthday.text = DateFormat('yyyy-MM-dd').format(widget.customer!.birthday);
+      _controllerFirstName.text = widget.customer?.firstName ?? '';
+      _controllerLastName.text = widget.customer?.lastName ?? '';
+      _controllerAddress.text = widget.customer?.address ?? '';
+      _dateTimeControllerBirthday.text = widget.customer != null
+          ? DateFormat('yyyy-MM-dd').format(widget.customer!.birthday)
+          : '';
     } else {
       // Retrieve saved inputs from EncryptedSharedPreferences
       encryptedSharedPreferences.getString('first_name').then((value) {
@@ -258,8 +262,22 @@ class AddCustomerState extends State<AddCustomer> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.customer == null ? "Add Customer" : "Update Customer"),
+        title: Text(widget.customer == null
+            ? AppLocalizations.of(context)!.translate('add_customer')!
+            : AppLocalizations.of(context)!.translate('update_customer')!),
         actions: [
+          OutlinedButton(
+            onPressed: () {
+              widget.setLocale(Locale("ne", "NP"));
+            },
+            child: Text(AppLocalizations.of(context)!.translate('switch_to_nepali')!),
+          ),
+          OutlinedButton(
+            onPressed: () {
+              widget.setLocale(Locale("en", "US"));
+            },
+            child: Text(AppLocalizations.of(context)!.translate('switch_to_english')!),
+          ),
           IconButton(
             icon: Icon(Icons.info),
             onPressed: _showInstructions,
@@ -268,68 +286,88 @@ class AddCustomerState extends State<AddCustomer> {
             icon: Icon(Icons.refresh),
             onPressed: _refreshPage,
           ),
-          OutlinedButton(onPressed: () { Navigator.pop(context); }, child: Text("Go Back")),
+          OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(AppLocalizations.of(context)!.translate('go_back')!)),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _controllerFirstName,
-              decoration: InputDecoration(
-                labelText: "First Name",
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                encryptedSharedPreferences.setString('first_name', value);
-              },
-            ),
-            SizedBox(height: 4),
-            TextField(
-              controller: _controllerLastName,
-              decoration: InputDecoration(
-                labelText: "Last Name",
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                encryptedSharedPreferences.setString('last_name', value);
-              },
-            ),
-            SizedBox(height: 4),
-            TextField(
-              controller: _controllerAddress,
-              decoration: InputDecoration(
-                labelText: "Address",
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                encryptedSharedPreferences.setString('address', value);
-              },
-            ),
-            SizedBox(height: 4),
-            TextField(
-              controller: _dateTimeControllerBirthday,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Select Birthday',
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-              onTap: () => selectDateTime(context, _dateTimeControllerBirthday),
-            ),
-            SizedBox(height: 4),
-            ElevatedButton(
-              onPressed: widget.customer == null ? addCustomer : updateCustomer,
-              child: Text(widget.customer == null ? "Add Customer" : "Update Customer"),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: _controllerFirstName,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.translate('first_name')!,
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          encryptedSharedPreferences.setString('first_name', value);
+                        },
+                      ),
+                      SizedBox(height: 4),
+                      TextField(
+                        controller: _controllerLastName,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.translate('last_name')!,
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          encryptedSharedPreferences.setString('last_name', value);
+                        },
+                      ),
+                      SizedBox(height: 4),
+                      TextField(
+                        controller: _controllerAddress,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.translate('address')!,
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          encryptedSharedPreferences.setString('address', value);
+                        },
+                      ),
+                      SizedBox(height: 4),
+                      TextField(
+                        controller: _dateTimeControllerBirthday,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.translate('select_birthday')!,
+                          suffixIcon: Icon(Icons.calendar_today),
+                        ),
+                        onTap: () => selectDateTime(context, _dateTimeControllerBirthday),
+                      ),
+                      SizedBox(height: 4),
+                      Spacer(),
+                      ElevatedButton(
+                        onPressed: widget.customer == null ? addCustomer : updateCustomer,
+                        child: Text(widget.customer == null
+                            ? AppLocalizations.of(context)!.translate('add_customer')!
+                            : AppLocalizations.of(context)!.translate('update_customer')!),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
