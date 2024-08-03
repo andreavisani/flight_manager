@@ -1,23 +1,20 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
 import 'AirplaneDB.dart';
 import 'AirplaneDAO.dart';
 import 'Airplane.dart';
 import '../AppLocalizations.dart';
 
 class AirplaneListPage extends StatefulWidget {
-  final Function(Locale) setLocale;
-
-  AirplaneListPage({required this.setLocale});
-
   @override
   _AirplaneListPageState createState() => _AirplaneListPageState();
 }
 
 class _AirplaneListPageState extends State<AirplaneListPage> {
   AirplaneDatabase? _database;
-  late EncryptedSharedPreferences _prefs;
+  final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
   final _formKey = GlobalKey<FormState>();
   final _typeController = TextEditingController();
   final _passengersController = TextEditingController();
@@ -25,13 +22,14 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
   final _rangeController = TextEditingController();
   int? _editingIndex;
   Airplane? _selectedAirplane;
-  Locale _locale = const Locale('en', 'CA');
+  String _currentLocale = 'en_CA';
 
   @override
   void initState() {
     super.initState();
     _initDatabase();
-    // _initPreferences();
+    _loadSavedData();
+    _loadLocale();
   }
 
   Future<void> _initDatabase() async {
@@ -45,33 +43,30 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
     }
   }
 
-  // Future<void> _initPreferences() async {
-  //   try {
-  //     _prefs = await EncryptedSharedPreferences.getInstance();
-  //     await _loadSavedData();
-  //   } catch (e) {
-  //     print('Error initializing preferences: $e');
-  //   }
-  // }
+
 
   Future<void> _loadSavedData() async {
-    _typeController.text = await _prefs.getString('type') ?? '';
-    _passengersController.text = await _prefs.getString('passengers') ?? '';
-    _maxSpeedController.text = await _prefs.getString('maxSpeed') ?? '';
-    _rangeController.text = await _prefs.getString('range') ?? '';
+    if (prefs != null) {
+      _typeController.text = await prefs!.getString('type') ?? '';
+      _passengersController.text = await prefs!.getString('passenger') ?? '';
+      _maxSpeedController.text = await prefs!.getString('speed') ?? '';
+      _rangeController.text = await prefs!.getString('range') ?? '';
+    }
   }
-
-  Future<void> _saveData() async {
-    await _prefs.setString('type', _typeController.text);
-    await _prefs.setString('passengers', _passengersController.text);
-    await _prefs.setString('maxSpeed', _maxSpeedController.text);
-    await _prefs.setString('range', _rangeController.text);
-  }
+  //
+  // Future<void> _saveData() async {
+  //   if (prefs != null) {
+  //     await prefs!.setString('type', _typeController.text);
+  //     await _prefs!.setString('passengers', _passengersController.text);
+  //     await _prefs!.setString('maxSpeed', _maxSpeedController.text);
+  //     await _prefs!.setString('range', _rangeController.text);
+  //   }
+  // }
 
   void _addOrUpdateAirplane() async {
     if (_database == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.translate('database_not_initialized')!)),
+        SnackBar(content: Text(AppLocalizations.of(context)?.translate('db_not_initialized') ?? 'Database is not initialized yet.')),
       );
       return;
     }
@@ -89,17 +84,17 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
         if (_editingIndex == null) {
           await _database!.airplaneDAO.insertAirplane(airplane);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.translate('airplane_added')!)),
+            SnackBar(content: Text(AppLocalizations.of(context)?.translate('airplane_added') ?? 'Airplane added successfully.')),
           );
         } else {
           await _database!.airplaneDAO.updateAirplane(airplane);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.translate('airplane_updated')!)),
+            SnackBar(content: Text(AppLocalizations.of(context)?.translate('airplane_updated') ?? 'Airplane updated successfully.')),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.translate('error')}: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)?.translate('error') ?? 'Error: $e')),
         );
       }
       setState(() {
@@ -111,7 +106,7 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
         _selectedAirplane = null;
       });
 
-      await _saveData();
+      // await _saveData();
     }
   }
 
@@ -129,7 +124,7 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
   void _deleteAirplane(int id) async {
     if (_database == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.translate('database_not_initialized')!)),
+        SnackBar(content: Text(AppLocalizations.of(context)?.translate('db_not_initialized') ?? 'Database is not initialized yet.')),
       );
       return;
     }
@@ -138,30 +133,30 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.translate('confirm_deletion')!),
-          content: Text(AppLocalizations.of(context)!.translate('confirm_deletion_message')!),
+          title: Text(AppLocalizations.of(context)?.translate('confirm_deletion') ?? 'Confirm Deletion'),
+          content: Text(AppLocalizations.of(context)?.translate('delete_confirmation') ?? 'Are you sure you want to delete this airplane?'),
           actions: [
             TextButton(
-              child: Text(AppLocalizations.of(context)!.translate('cancel')!),
+              child: Text(AppLocalizations.of(context)?.translate('cancel') ?? 'Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(AppLocalizations.of(context)!.translate('delete')!),
+              child: Text(AppLocalizations.of(context)?.translate('delete') ?? 'Delete'),
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
                   await _database!.airplaneDAO.deleteAirplane(Airplane(id: id, name: '', passengers: 0, speed: 0, distance: 0));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context)!.translate('airplane_deleted')!)),
+                    SnackBar(content: Text(AppLocalizations.of(context)?.translate('airplane_deleted') ?? 'Airplane deleted successfully.')),
                   );
                   setState(() {
                     _selectedAirplane = null;
                   });
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.translate('error')}: $e')),
+                    SnackBar(content: Text(AppLocalizations.of(context)?.translate('error') ?? 'Error deleting airplane: $e')),
                   );
                 }
               },
@@ -177,11 +172,13 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.translate('instructions')!),
-          content: Text(AppLocalizations.of(context)!.translate('instructions_content')!),
+          title: Text(AppLocalizations.of(context)?.translate('instructions') ?? 'Instructions'),
+          content: Text(AppLocalizations.of(context)?.translate('instructions_content') ?? '1. Use the form to add or update airplane details.\n'
+              '2. Use the list to view, edit, or delete airplanes.\n'
+              '3. The details of the selected airplane will be displayed on the right (on larger screens).'),
           actions: [
             TextButton(
-              child: Text(AppLocalizations.of(context)!.translate('ok')!),
+              child: Text(AppLocalizations.of(context)?.translate('ok') ?? 'OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -192,28 +189,46 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
     );
   }
 
-  void _changeLanguage(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
-    widget.setLocale(locale);
+  void _changeLanguage(String locale) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', locale);
+    MyApp.setLocale(context, Locale(locale.split('_')[0], locale.split('_')[1]));
   }
+
+  void _loadLocale() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _currentLocale = prefs.getString('locale') ?? 'en_CA';
+    });
+    MyApp.setLocale(context, Locale(_currentLocale.split('_')[0], _currentLocale.split('_')[1]));
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.translate('airplane_list')!),
+        title: Text(AppLocalizations.of(context)?.translate('airplane_list') ?? 'Airplane List'),
         actions: [
-          OutlinedButton(
-            onPressed: () {
-              _changeLanguage(Locale("fr", "FR"));
-            },
-            child: Text(AppLocalizations.of(context)!.translate('switch_to_french')!),
-          ),
           IconButton(
             icon: Icon(Icons.info_outline),
             onPressed: _showInstructions,
+          ),
+          PopupMenuButton<String>(
+            onSelected: _changeLanguage,
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  value: 'en_CA',
+                  child: Text(AppLocalizations.of(context)?.translate('english') ?? 'English'),
+                ),
+                PopupMenuItem(
+                  value: 'fr_FR',
+                  child: Text(AppLocalizations.of(context)?.translate('french') ?? 'French'),
+                ),
+              ];
+            },
+            icon: Icon(Icons.language),
           ),
         ],
       ),
@@ -229,133 +244,91 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
                 children: [
                   TextFormField(
                     controller: _typeController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.translate('name')!),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.translate('name') ?? 'Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.translate('please_enter_name');
+                        return AppLocalizations.of(context)?.translate('enter_name') ?? 'Please enter the airplane name';
                       }
                       return null;
-                    },
+                    },onChanged: (value) {
+                    prefs.setString('type', value);
+                  },
                   ),
                   TextFormField(
                     controller: _passengersController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.translate('passengers')!),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.translate('passengers') ?? 'Passengers'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.translate('please_enter_passengers');
+                        return AppLocalizations.of(context)?.translate('enter_passengers') ?? 'Please enter the number of passengers';
                       }
                       return null;
+                    },
+                    onChanged: (value) {
+                      prefs.setString('passenger', value);
                     },
                   ),
                   TextFormField(
                     controller: _maxSpeedController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.translate('max_speed')!),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.translate('max_speed') ?? 'Max Speed'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.translate('please_enter_max_speed');
+                        return AppLocalizations.of(context)?.translate('enter_max_speed') ?? 'Please enter the maximum speed';
                       }
                       return null;
+                    },
+                    onChanged: (value) {
+                      prefs.setString('speed', value);
                     },
                   ),
                   TextFormField(
                     controller: _rangeController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.translate('range')!),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.translate('range') ?? 'Range'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.translate('please_enter_range');
+                        return AppLocalizations.of(context)?.translate('enter_range') ?? 'Please enter the range';
                       }
                       return null;
                     },
+                    onChanged: (value) {
+                      prefs.setString('range', value);
+                    },
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _addOrUpdateAirplane,
-                    child: Text(_editingIndex == null
-                        ? AppLocalizations.of(context)!.translate('add_airplane')!
-                        : AppLocalizations.of(context)!.translate('update_airplane')!),
+                    child: Text(AppLocalizations.of(context)?.translate(_editingIndex == null ? 'Save' : 'Update') ?? (_editingIndex == null ? 'Save' : 'Update')),
                   ),
                 ],
               ),
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<Airplane>>(
-              stream: _database?.airplaneDAO.findAllAirplanes().asStream(),
+            child: FutureBuilder<List<Airplane>>(
+              future: _database!.airplaneDAO.findAllAirplanes(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text(AppLocalizations.of(context)!.translate('error')!));
+                  return Center(child: Text(AppLocalizations.of(context)?.translate('error_loading_data') ?? 'Error loading data'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text(AppLocalizations.of(context)!.translate('no_airplanes')!));
+                  return Center(child: Text(AppLocalizations.of(context)?.translate('no_airplanes') ?? 'No airplanes available'));
                 } else {
                   final airplanes = snapshot.data!;
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isPhone = constraints.maxWidth < 600;
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: airplanes.length,
-                              itemBuilder: (context, index) {
-                                final airplane = airplanes[index];
-                                return ListTile(
-                                  title: Text(airplane.name),
-                                  subtitle: Text(
-                                      '${AppLocalizations.of(context)!.translate('passengers')}: ${airplane.passengers}, ${AppLocalizations.of(context)!.translate('speed')}: ${airplane.speed}, ${AppLocalizations.of(context)!.translate('distance')}: ${airplane.distance}'),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () => _editAirplane(airplane),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () => _deleteAirplane(airplane.id),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedAirplane = airplane;
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          if (!isPhone)
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      AppLocalizations.of(context)!.translate('airplane_details')!,
-                                      style: Theme.of(context).textTheme.headline6,
-                                    ),
-                                    SizedBox(height: 16),
-                                    if (_selectedAirplane != null)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('${AppLocalizations.of(context)!.translate('name')}: ${_selectedAirplane!.name}'),
-                                          Text('${AppLocalizations.of(context)!.translate('passengers')}: ${_selectedAirplane!.passengers}'),
-                                          Text('${AppLocalizations.of(context)!.translate('max_speed')}: ${_selectedAirplane!.speed}'),
-                                          Text('${AppLocalizations.of(context)!.translate('range')}: ${_selectedAirplane!.distance}'),
-                                        ],
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
+                  return ListView.builder(
+                    itemCount: airplanes.length,
+                    itemBuilder: (context, index) {
+                      final airplane = airplanes[index];
+                      return ListTile(
+                        title: Text(airplane.name),
+                        subtitle: Text('${airplane.passengers} ${AppLocalizations.of(context)?.translate('passengers') ?? 'Passengers'}'),
+                        onTap: () => _editAirplane(airplane),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _deleteAirplane(airplane.id),
+                        ),
                       );
                     },
                   );
@@ -364,6 +337,10 @@ class _AirplaneListPageState extends State<AirplaneListPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showInstructions,
+        child: Icon(Icons.help_outline),
       ),
     );
   }
