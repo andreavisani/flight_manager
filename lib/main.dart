@@ -1,7 +1,16 @@
+// import 'package:flight_manager/AddFlight.dart';
+// import 'package:flight_manager/AppLocalizations.dart';
+// import 'package:flight_manager/ReservationPage.dart';
+import 'package:flight_manager/Airplane/AirplaneList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'Airplane/AirplaneList.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'AddCustomer.dart';
 import 'AppLocalizations.dart';
+import 'package:flutter/rendering.dart';
+// import 'FlightsPage.dart';
+// import 'ReservationPage.dart';
+// import 'customerlist.dart';
 
 
 void main() {
@@ -20,21 +29,27 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() {
     return _MyAppState();
   }
+
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp>{
   var locale = Locale("en", "CA");
 
   void changeLanguage(Locale newLanguage) {
     setState(() { locale = newLanguage; });
   }
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Translation support
+
+      //TRANSLATION
       supportedLocales: [
         Locale("en", "CA"),
+        Locale("it", "IT"),
+        Locale('ne', 'NP'),
+        Locale("en", "US"),
         Locale('fr', 'FR')
       ],
       localizationsDelegates: [
@@ -42,26 +57,26 @@ class _MyAppState extends State<MyApp> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate
       ],
+      //DEFAULT LANGUAGE OF THE APP (en, CA)
       locale: locale,
 
-      // Route definitions
+
+
+      //LIST OF ALL PAGES
       routes: {
-        '/homePage': (context) => MyHomePage(title: 'Flight Manager Home Page'),
-        '/airplane': (context) => AirplaneListPage(setLocale: (newLocale) {
+        '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
+        '/airplane': (context) => AirplaneListPage(),
+        '/flights': (context) => FlightsPage(),
+        '/addFlight': (context) => AddFlight(),
+        '/customer': (context) => CustomersPage(setLocale: (newLocale) {
           _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
           state?.changeLanguage(newLocale);
         }),
-        // '/flights': (context) => FlightsPage(),
-        // '/addFlight': (context) => AddFlight(),
-        // '/customer': (context) => CustomersPage(setLocale: (newLocale) {
-        //   _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-        //   state?.changeLanguage(newLocale);
-        // }),
-        // '/addCustomer': (context) => AddCustomer(setLocale: (newLocale) {
-        //   _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-        //   state?.changeLanguage(newLocale);
-        // }),
-        // '/reservations': (context) => ReservationPage(),
+        '/addCustomer': (context) => AddCustomer(setLocale: (newLocale) {
+          _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+          state?.changeLanguage(newLocale);
+        }),
+        '/reservations': (context) => ReservationPage(),
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -88,10 +103,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
         title: Text(widget.title),
       ),
       body: Center(
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -119,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text("Reservations"),
             ),
+
           ],
         ),
       ),
