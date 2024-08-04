@@ -76,7 +76,7 @@ class AddFlightState extends State<AddFlight> {
     if ((_controllerDepartureCity.value.text == "" || _controllerDepartureCity.value.text == null) && (_controllerDestinationCity.value.text == "" || _controllerDestinationCity.value.text == null))  {
       return;
     } else {
-      snackBar = SnackBar( content: Text(''), action: SnackBarAction( label:'Clear Saved Data', onPressed: clearLoginData,),duration: Duration(seconds: 5),);
+      snackBar = SnackBar( content: Text(''), action: SnackBarAction( label: AppLocalizations.of(context)!.translate('clear_saved_data')!, onPressed: clearLoginData,),duration: Duration(seconds: 5),);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
@@ -116,7 +116,7 @@ class AddFlightState extends State<AddFlight> {
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Fields are empty'),
+          title: Text(AppLocalizations.of(context)!.translate('empty_fields')!),
           content: Text(message),
           actions: <Widget>[
             TextButton(
@@ -139,17 +139,17 @@ class AddFlightState extends State<AddFlight> {
     bool valid = true;
     bool thereIsDepartureTime = false;
     bool thereIsArrivalTime = false;
-    var message = "Some elements are missing or invalid:\n";
+    var message = AppLocalizations.of(context)!.translate('invalid_elements')! + "\n";
     if (_controllerDepartureCity.value.text == "" || _controllerDepartureCity.value.text == null ){
-      message += "Departure city\n";
+      message += AppLocalizations.of(context)!.translate('departure_city_info')! + "\n";
       valid = false;
     }
     if (_controllerDestinationCity.value.text == "" || _controllerDestinationCity.value.text == null ){
-      message += "Destination city\n";
+      message += AppLocalizations.of(context)!.translate('destination_city_info')! + "\n";
       valid = false;
     }
     if (_dateTimeControllerDeparture.value.text == "" || _dateTimeControllerDeparture.value.text == null ){
-      message += "Departure time\n";
+      message += AppLocalizations.of(context)!.translate('departure_time_info')! + "\n";
 
       valid = false;
     }
@@ -158,7 +158,7 @@ class AddFlightState extends State<AddFlight> {
     }
 
     if (_dateTimeControllerArrival.value.text == "" || _dateTimeControllerArrival.value.text == null ){
-      message += "Arrival time\n";
+      message += AppLocalizations.of(context)!.translate('arrival_time_info')! + "\n";
       thereIsArrivalTime = false;
       valid = false;
     }
@@ -172,7 +172,7 @@ class AddFlightState extends State<AddFlight> {
       DateTime arrivalTime = DateFormat('yyyy-MM-dd HH:mm').parse(_dateTimeControllerArrival.text);
 
       if (arrivalTime.isBefore(departureTime)) {
-        message += "Arrival time cannot be before departure time\n";
+        message += AppLocalizations.of(context)!.translate('arrival_departure')! + "\n";
         valid = false;
       }
     }
@@ -319,11 +319,16 @@ class AddFlightState extends State<AddFlight> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(AppLocalizations.of(context)!.translate('add_new_flight')!),
+        backgroundColor: Colors.blue[900],
+        title: Text(AppLocalizations.of(context)!.translate('add_new_flight')!, style: TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,),
+        ),
+        centerTitle: true,
         actions: [
-          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info)),
-          IconButton(onPressed: () {showLanguageInfo(context);}, icon: Icon(Icons.language)),
+          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info, color: Colors.white,)),
+          IconButton(onPressed: () {showLanguageInfo(context);}, icon: Icon(Icons.language, color: Colors.white,)),
 
         ],
       ),
@@ -334,7 +339,7 @@ class AddFlightState extends State<AddFlight> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(AppLocalizations.of(context)!.translate('add_new_flight')!,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue[900]),
             ),
             SizedBox(height: 16),
             TextField(
@@ -343,7 +348,7 @@ class AddFlightState extends State<AddFlight> {
                 hintText: AppLocalizations.of(context)!.translate('departure_city')!,
                 border: OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.translate('departure_city')!,
-                prefixIcon: Icon(Icons.flight_takeoff, color: Colors.blueAccent),
+                prefixIcon: Icon(Icons.flight_takeoff, color: Colors.blue[900]),
               ),
             ),
             SizedBox(height: 16),
@@ -353,7 +358,7 @@ class AddFlightState extends State<AddFlight> {
                 hintText: AppLocalizations.of(context)!.translate('destination_city')!,
                 border: OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.translate('destination_city')!,
-                prefixIcon: Icon(Icons.flight_land, color: Colors.blueAccent),
+                prefixIcon: Icon(Icons.flight_land, color: Colors.blue[900]),
               ),
             ),
             SizedBox(height: 16),
@@ -364,7 +369,7 @@ class AddFlightState extends State<AddFlight> {
                 hintText: AppLocalizations.of(context)!.translate('departure_time')!,
                 border: OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.translate('departure_time')!,
-                prefixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
+                prefixIcon: Icon(Icons.calendar_today, color: Colors.blue[900]),
               ),
               onTap: () => _selectDateTime(context, _dateTimeControllerDeparture),
             ),
@@ -376,7 +381,7 @@ class AddFlightState extends State<AddFlight> {
                 hintText: AppLocalizations.of(context)!.translate('arrival_time')!,
                 border: OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.translate('arrival_time')!,
-                prefixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
+                prefixIcon: Icon(Icons.calendar_today, color: Colors.blue[900]),
               ),
               onTap: () => _selectDateTime(context, _dateTimeControllerArrival),
             ),
@@ -390,7 +395,7 @@ class AddFlightState extends State<AddFlight> {
                       Navigator.pushNamed(context, '/flights');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent, // background color
+                      backgroundColor: Colors.blue[900], // background color
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       textStyle: TextStyle(fontSize: 18),
                     ),

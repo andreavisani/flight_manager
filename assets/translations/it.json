@@ -31,5 +31,13 @@
   "edit": "Modifica",
   "edit_flight": "Modifica volo",
   "save": "Salva",
-  "cancel": "Cancella"
+  "cancel": "Cancella",
+  "clear_saved_data": "Cancella i dati salvati",
+  "departure_city_info": "Citta di partenza",
+  "destination_city_info": "Citta di destinazione",
+  "departure_time_info": "Orario di partenza",
+  "arrival_time_info": "Orario di arrivo",
+  "arrival_departure": "L'orario di partenza non pue essere dopo quello di arrivo",
+  "invalid_elements": "Alcuni elementi sono mancanti o invalidi",
+  "empty_fields": "Campi vuoti"
 }

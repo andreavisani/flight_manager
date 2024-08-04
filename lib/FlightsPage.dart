@@ -110,7 +110,7 @@ class PersonalInfoState extends State<FlightsPage> {
         children: [
           Text(
             AppLocalizations.of(context)!.translate('flights_list')!,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue[900]),
           ),
           SizedBox(height: 16),
           Expanded(
@@ -164,7 +164,7 @@ class PersonalInfoState extends State<FlightsPage> {
                               ),
                             ],
                           ),
-                          Icon(Icons.airplanemode_active, color: Colors.blueAccent),
+                          Icon(Icons.airplanemode_active, color: Colors.blue[900]),
                         ],
                       ),
                     ),
@@ -184,7 +184,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   Navigator.pushNamed(context, '/homePage');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent, // background color
+                  backgroundColor: Colors.blue[900], // background color
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
@@ -196,7 +196,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   Navigator.pushNamed(context, '/addFlight');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent, // background color
+                  backgroundColor: Colors.blue[900], // background color
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
@@ -220,7 +220,7 @@ class PersonalInfoState extends State<FlightsPage> {
       return Center(
         child: Text(
           AppLocalizations.of(context)!.translate('select_details')!,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue[900]),
         ),
       );
     } else {
@@ -231,7 +231,7 @@ class PersonalInfoState extends State<FlightsPage> {
           children: [
             Text(
             AppLocalizations.of(context)!.translate('flights_details')!,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue[900]),
             ),
             SizedBox(height: 16),
             Card(
@@ -275,7 +275,7 @@ class PersonalInfoState extends State<FlightsPage> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.blue[900],
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     textStyle: TextStyle(fontSize: 18),
                   ),
@@ -285,7 +285,7 @@ class PersonalInfoState extends State<FlightsPage> {
                 //EDIT BUTTON
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.blue[900],
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     textStyle: TextStyle(fontSize: 18),
                   ),
@@ -377,7 +377,7 @@ class PersonalInfoState extends State<FlightsPage> {
             children: [
               Text(
                 AppLocalizations.of(context)!.translate('edit_flight')!,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue[900]),
               ),
               SizedBox(height: 16),
               TextField(
@@ -386,7 +386,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   hintText: AppLocalizations.of(context)!.translate('departure_city')!,
                   border: OutlineInputBorder(),
                   labelText: AppLocalizations.of(context)!.translate('departure_city')!,
-                  prefixIcon: Icon(Icons.flight_takeoff, color: Colors.blueAccent),
+                  prefixIcon: Icon(Icons.flight_takeoff, color: Colors.blue[900]),
                 ),
               ),
               SizedBox(height: 16),
@@ -396,7 +396,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   hintText: AppLocalizations.of(context)!.translate('destination_city')!,
                   border: OutlineInputBorder(),
                   labelText: AppLocalizations.of(context)!.translate('destination_city')!,
-                  prefixIcon: Icon(Icons.flight_land, color: Colors.blueAccent),
+                  prefixIcon: Icon(Icons.flight_land, color: Colors.blue[900]),
                 ),
               ),
               SizedBox(height: 16),
@@ -407,7 +407,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   hintText: AppLocalizations.of(context)!.translate('departure_time')!,
                   border: OutlineInputBorder(),
                   labelText: AppLocalizations.of(context)!.translate('departure_time')!,
-                  prefixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
+                  prefixIcon: Icon(Icons.calendar_today, color: Colors.blue[900]),
                 ),
                 onTap: () => _selectDateTime(context, _dateTimeControllerDeparture),
               ),
@@ -419,7 +419,7 @@ class PersonalInfoState extends State<FlightsPage> {
                   hintText: AppLocalizations.of(context)!.translate('arrival_time')!,
                   border: OutlineInputBorder(),
                   labelText: AppLocalizations.of(context)!.translate('arrival_time')!,
-                  prefixIcon: Icon(Icons.calendar_today, color: Colors.blueAccent),
+                  prefixIcon: Icon(Icons.calendar_today, color: Colors.blue[900]),
                 ),
                 onTap: () => _selectDateTime(context, _dateTimeControllerArrival),
               ),
@@ -573,12 +573,18 @@ class PersonalInfoState extends State<FlightsPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blue[900],
         actions: [
-          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info)),
-          IconButton(onPressed: () {showLanguageInfo(context);}, icon: Icon(Icons.language)),
+          IconButton(onPressed: () {showUsageInfo(context);}, icon: Icon(Icons.info, color: Colors.white,)),
+          IconButton(onPressed: () {showLanguageInfo(context);}, icon: Icon(Icons.language, color: Colors.white,)),
         ],
-        title: Text(AppLocalizations.of(context)!.translate('flights')!),
+        title: Text(AppLocalizations.of(context)!.translate('flights')!,
+          style: TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,),
+      ),
+        centerTitle: true,
       ),
       body: responsiveLayout(),
     );

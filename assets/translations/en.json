@@ -44,6 +44,10 @@
   "destination_city": "Destination City:",
   "departure_time": "Departure Time:",
   "arrival_time": "Arrival Time:",
+  "departure_city_info": "Departure City",
+  "destination_city_info": "Destination City",
+  "departure_time_info": "Departure Time",
+  "arrival_time_info": "Arrival Time",
   "flights_list_instruction1": "Click a flight to display details.",
   "flights_list_instruction2": "Click a flight for 2 seconds to remove it.",
   "flights_list_instruction3": "Use 'Go Back' button to return to the main page.",
@@ -81,5 +85,9 @@
   "error_loading_data": "Error loading data",
   "no_airplanes": "No airplanes available",
   "english": "English",
-  "french": "French"
+  "french": "French",
+  "clear_saved_data": "Clear saved data",
+  "arrival_departure": "Arrival time cannot be before departure time",
+  "invalid_elements": "Some elements are missing or invalid",
+  "empty_fields": "Fields are empty"
 }
