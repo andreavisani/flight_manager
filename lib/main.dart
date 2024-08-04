@@ -9,6 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'FlightsPage.dart';
 import 'ReservationPage.dart';
 import 'customerlist.dart';
+import 'package:flight_manager/Airplane/AirplaneList.dart';
+
 
 
 void main() {
@@ -48,6 +50,7 @@ class _MyAppState extends State<MyApp>{
         Locale("it", "IT"),
         Locale('ne', 'NP'),
         Locale("en", "US"),
+        Locale('fr', 'FR')
       ],
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -62,6 +65,7 @@ class _MyAppState extends State<MyApp>{
       //LIST OF ALL PAGES
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
+        '/airplane': (context) => AirplaneListPage(),
         '/flights': (context) => FlightsPage(),
         '/addFlight': (context) => AddFlight(),
         '/customer': (context) => CustomersPage(setLocale: (newLocale) {
@@ -122,7 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Customers"),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/airplane');
+              },
               child: Text("Airplanes"),
             ),
             ElevatedButton(
