@@ -11,8 +11,6 @@ import 'ReservationPage.dart';
 import 'customerlist.dart';
 import 'package:flight_manager/Airplane/AirplaneList.dart';
 
-
-
 void main() {
   runApp(const MyApp());
 }
@@ -29,22 +27,20 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() {
     return _MyAppState();
   }
-
 }
 
-class _MyAppState extends State<MyApp>{
+class _MyAppState extends State<MyApp> {
   var locale = Locale("en", "CA");
 
   void changeLanguage(Locale newLanguage) {
-    setState(() { locale = newLanguage; });
+    setState(() {
+      locale = newLanguage;
+    });
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-      //TRANSLATION
       supportedLocales: [
         Locale("en", "CA"),
         Locale("it", "IT"),
@@ -57,12 +53,8 @@ class _MyAppState extends State<MyApp>{
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate
       ],
-      //DEFAULT LANGUAGE OF THE APP (en, CA)
       locale: locale,
 
-
-
-      //LIST OF ALL PAGES
       routes: {
         '/homePage': (context) => MyHomePage(title: 'Flight manager home page'),
         '/airplane': (context) => AirplaneListPage(),
@@ -78,13 +70,9 @@ class _MyAppState extends State<MyApp>{
         }),
         '/reservations': (context) => ReservationPage(),
       },
-      title: 'Flutter Demo',
+      title: 'Algonquin College Airlines',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Algonquin College Airlines Home Page'),
     );
   }
 }
@@ -103,41 +91,110 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
+        automaticallyImplyLeading: false, // NO BACK ARROW
+        backgroundColor: Colors.blue[900],
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 28.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Center(
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/flights');
-              },
-              child: Text("Flights"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/customer');
-              },
-              child: Text("Customers"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/airplane');
-              },
-              child: Text("Airplanes"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/reservations');
-              },
-              child: Text("Reservations"),
+
+            SizedBox(
+              width: 200.0,
+              height: 50.0,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/flights');
+                },
+                child: Text("Flights"),
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 18.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                  backgroundColor: Colors.blue[800],
+                  foregroundColor: Colors.white, // Explicitly set the text color to white
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                ),
+              ),
             ),
 
+            SizedBox(height: 16.0), //ADD SPACING
+
+            // CUSTOMERS BUTTONS
+            SizedBox(
+              width: 200.0,
+              height: 50.0,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/customer');
+                },
+                child: Text("Customers"),
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 18.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                  backgroundColor: Colors.blue[800],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 16.0),
+
+            // AIRPLANE BUTTON
+            SizedBox(
+              width: 200.0,
+              height: 50.0,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/airplane');
+                },
+                child: Text("Airplanes"),
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 18.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                  backgroundColor: Colors.blue[800],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0), // Spacing between buttons
+
+            // RESERVATIONS BUTTON
+            SizedBox(
+              width: 200.0,
+              height: 50.0,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/reservations');
+                },
+                child: Text("Reservations"),
+                style: ElevatedButton.styleFrom(
+                  textStyle: TextStyle(fontSize: 18.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                  backgroundColor: Colors.blue[800],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -213,7 +213,7 @@ packages:
     dependency: transitive
     description:
       name: dev_build
-      sha256: c58c2ef387bdb4a2a770e90497d50f19c5363c046deb89e9b5bfa6f08986ef87
+      sha256: "5d23104ed6212275cca89b2226b5288833c6bb15529d4ad66a35a4b30fcb792b"
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0+1"
