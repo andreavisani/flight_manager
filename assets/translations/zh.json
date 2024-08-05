@@ -1,0 +1,21 @@
+{
+  "reservation_list": "預訂列表",
+  "information": "資訊",
+  "use_plus_button": "使用 '+' 按鈕添加預訂。",
+  "no_reservations": "沒有預訂",
+  "action_completed": "操作完成",
+  "select_language": "選擇語言",
+  "new_reservation": "新預訂",
+  "edit_reservation": "編輯預訂",
+  "reservation_name": "預訂名稱",
+  "select_customer": "選擇客戶",
+  "select_flight": "選擇航班",
+  "to": "至",
+  "select_date": "選擇日期",
+  "date": "日期",
+  "create": "創建",
+  "save": "儲存",
+  "delete": "刪除",
+  "reservation_saved": "預訂已儲存",
+  "reservation_deleted": "預訂已刪除"
+}
